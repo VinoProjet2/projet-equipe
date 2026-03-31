@@ -1,0 +1,59 @@
+body {
+  margin: 0;
+  padding: 0;
+
+  font-family: "Helvetica Neue", Arial;
+  background: var(--blanc-clair);
+  margin-inline: 120px;
+}
+
+.home {
+  margin-top: 60px;
+}
+
+:root {
+  /* Couleurs*/
+  --gris-clair: #efefef;
+  --gris-fonce: #333;
+  --gris-clair: #ccc;
+  --gris-semi-transparent: rgba(255, 255, 255, 0.4);
+  --gris-rose-clair: rgb(243, 239, 239);
+  --gris-moyen: #999;
+  --gris-clair-2: #ddd;
+  --gris-tres-clair-2: #f1f1f1;
+  --gris-fonce-2: #555;
+
+  --rouge-vin-profond: #8b0036;
+  --rouge-framboise-fonce: #a10045;
+
+  --blanc-fonce: #fff;
+  --blanc-clair: #f4f4f4;
+  --blanc-transparent: rgba(255, 255, 255, 0.2);
+  --blanc-tres-clair: #f8f8f8;
+
+  --noir-profond: rgb(13, 7, 7);
+  --noir-semi-transparent: rgba(0, 0, 0, 0.3);
+  --noir-tres-transparent: rgba(0, 0, 0, 0.2);
+  --noir-semi-transparent-2: rgba(255, 255, 255, 0.3);
+
+  --bordeau-profond: rgba(139, 0, 54, 0.95);
+
+  --bleu-vif: #0070f3;
+
+  --rose-pale: rgb(246, 226, 226);
+
+  /* Font-size */
+
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;
+  --fs-20: 1.25rem;
+  --fs-22: 1.375rem;
+  --fs-24: 1.5rem;
+  --fs-26: 1.625rem;
+  --fs-40: 2.5rem;
+  --fs-42: 2.625rem;
+  --fs-64: 4rem;
+  --fs-72: 4.5rem;
+}

@@ -1,0 +1,42 @@
+@import url("../base/base.css");
+.pagination {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: var(--fs-16) var(--fs-20);
+  margin-inline: 80px;
+}
+
+.per-page {
+  font-size: var(--fs-14);
+  margin-right: 30px;
+}
+
+.per-page select {
+  margin: 0 5px;
+  padding: 5px;
+}
+
+.pages {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pages span {
+  cursor: pointer;
+  padding: 5px 8px;
+  border-radius: 4px;
+}
+
+.pages span.active {
+  border-bottom: 2px solid var(--noir-profond);
+  font-weight: bold;
+}
+
+.pages button {
+  border: none;
+  background: transparent;
+  font-size: var(--fs-18);
+  cursor: pointer;
+}
