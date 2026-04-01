@@ -102,9 +102,38 @@ class VinController extends Controller
             'filters' => $allFilters,
         ]);
     }
+
     public function getVinsSaq(SAQService $service)
     {
-        $bouteilles = $service->getWines();
-        return $bouteilles;
+        $page = 1;
+        $pageSize = 100;
+        $vinFormattees = [];
+
+        // Récupérer le nombre total de produits pour calculer le nombre de pages
+        $resultat = $service->getWines($page, $pageSize);
+        $total = $resultat['total'];
+        $totalPages = ceil($total / $pageSize);
+
+
+        // Récupérer les produits page par page
+        while ($page <= $totalPages) {
+            // Récupérer les produits de la page actuelle
+            $resultat = $service->getWines($page, $pageSize);
+
+            // Filtrer les produits pour ne garder que les bouteilles de vin
+            $bouteillesVinFiltrees = $service->filtrerVins($resultat['bouteilles_de_vin']);
+
+            // Formater les attributs des bouteilles de vin filtrées
+            $bouteillesVinFormattees = $service->formatterAttributsVins($bouteillesVinFiltrees);
+
+            // Ajouter les bouteilles de vin formatées à la liste finale
+            foreach ($bouteillesVinFormattees as $vin) {
+                $vinFormattees[] = $vin;
+            }
+            $page++;
+        }
+
+        //  Retourner la liste finale des bouteilles de vin formatées
+        return $vinFormattees;
     }
 }

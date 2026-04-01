@@ -60,8 +60,17 @@ class SAQService
     $items = $response['data']['productSearch']['items'] ?? [];
     $total = $response['data']['productSearch']['total_count'] ?? 0;
 
+    return [
+      // 'data' => $this->transform($items),
+      'bouteilles_de_vin' => $items,
+      'total' => $total
+    ];
+  }
+
+  public function filtrerVins($bouteillesVin)
+  {
     // Filtrer les produits pour ne garder que ceux qui sont des bouteilles de vin
-    $bouteilles_de_vin = array_values(array_filter($items, function ($item) {
+    $bouteillesDeVin = array_values(array_filter($bouteillesVin, function ($item) {
       // Vérifier si le produit a un attribut "identite_produit" qui contient "vin", "champagne" ou "porto"
       foreach (($item['productView']['attributes']) as $attribute) {
         if (($attribute['name'] ?? '') === 'identite_produit' &&
@@ -74,11 +83,67 @@ class SAQService
       }
       return false;
     }));
+    return $bouteillesDeVin;
+  }
 
-    return [
-      // 'data' => $this->transform($items),
-      'bouteilles' => $bouteilles_de_vin,
-      'total' => $total
-    ];
+  public function formatterAttributsVins($bouteilles)
+  {
+    $vins_attributs = [];
+
+    foreach ($bouteilles as $bouteille) {
+      $vin_attributs = [];
+      foreach (($bouteille['productView']['attributes']) as $attribut) {
+        switch ($attribut['name']) {
+          case 'couleur':
+            $vin_attributs["couleur"] = $attribut['value'] ?? null;
+            break;
+          case 'cepage':
+            $vin_attributs["cepage"] =
+              is_array($attribut['value'])
+              ? implode(', ', $attribut['value']) : $attribut['value'] ?? null;
+            break;
+          case 'format_contenant_ml':
+            $vin_attributs["format"] = $attribut['value'] ?? null;
+            break;
+          case 'millesime_produit':
+            $vin_attributs["annee"] = $attribut['value'] ?? null;
+            break;
+          case 'pourcentage_alcool_par_volume':
+            $vin_attributs["degre_alcool"] = $attribut['value'] ?? null;
+            break;
+          case 'pays_origine':
+            $vin_attributs["pays"] = $attribut['value'] ?? null;
+            break;
+          case 'region_origine':
+            //case 'appellation':
+            $vin_attributs["region"] = $attribut['value'] ?? null;
+            break;
+          case 'taux_sucre':
+            $vin_attributs["taux_sucre"] = $attribut['value'] ?? null;
+            break;
+          default:
+            break;
+        }
+      }
+
+      $image = $bouteille['product']['small_image']['url'] ?? null;
+
+      if ($image) {
+        if (str_starts_with($image, '//')) {
+          $image = 'https:' . $image;
+        } elseif (str_starts_with($image, '/')) {
+          $image = 'https://www.saq.com' . $image;
+        }
+      } else {
+        $image = "https://www.saq.com/media/catalog/product/placeholder/default_image.jpg";
+      }
+      $vin_attributs["image_url"] =  $image;
+      $vin_attributs["saq_id"] = $bouteille['product']['sku'] ?? null;
+      $vin_attributs["nom"] = $bouteille['product']['name'] ?? null;
+      $vin_attributs["prix"] = $bouteille['product']['price_range']['minimum_price']['regular_price']['value'] ?? null;
+
+      $vins_attributs[] = $vin_attributs;
+    }
+    return $vins_attributs;
   }
 }
