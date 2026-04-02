@@ -1,14 +1,5 @@
-@import url("../base/base.css");
-*,
-::before,
-::after {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
 html {
-  font-size: 62.5%;
+  font-size: 87%;
 }
 
 body {
@@ -20,18 +11,20 @@ body {
 }
 .container {
   max-width: 1000px;
-  min-height: auto;
+  /* min-height: auto; */
   display: flex;
-  margin: 100px auto 0;
+  /* margin: 100px auto 0; */
+  margin-inline: auto;
   background: #fff;
+  margin-top: 10%;
 }
 
-.bloc-img {
+/* .bloc-img {
   position: relative;
   flex-basis: 50%;
   height: auto;
   max-height: 450px;
-}
+} */
 .bloc-img {
   position: relative;
   flex-basis: 50%;
@@ -73,7 +66,7 @@ body {
 
 .bloc-form {
   padding: 25px;
-  font-size: 1rem;
+  font-size: 70.5%;
 }
 .bloc-form h2 {
   font-size: 4.5em;
@@ -98,17 +91,22 @@ body {
 }
 .signup-btn {
   display: block;
-  padding: 1em;
-  margin: 0.6em 0 2em;
   width: 100%;
+  padding: 0.8em;
+  margin: 0.6em 0 2em;
   font-size: 1.6em;
   background: var(--rouge-vin-profond);
   color: #f1f1f1;
-  border: none;
-  border-radius: 5px;
+  border: 1px solid rgba(51, 51, 51, 0.3);
+  border-radius: 0.3em;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
+.bloc-form input,
+.signup-btn {
+  box-sizing: border-box;
+}
 .erreur {
   font-size: 18px;
   margin-bottom: 5px;
@@ -119,7 +117,7 @@ body {
 @media screen and (max-width: 850px) {
   .container {
     flex-direction: column;
-    margin: 50px 0;
+    margin: 50px auto;
   }
 
   .bloc-form h2 {
@@ -143,7 +141,9 @@ body {
 
   .bloc-form {
     order: 2;
-    width: 100%;
+    max-width: 100%;
+    font-size: 62.5%;
+    justify-content: center;
   }
   .erreur {
     font-size: 16px;
