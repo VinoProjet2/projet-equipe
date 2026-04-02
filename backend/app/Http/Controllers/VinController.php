@@ -109,12 +109,13 @@ class VinController extends Controller
      * Formate les attributs des bouteilles de vin filtrées
      * Retourne la liste des bouteilles de vin formatées
      * @param SAQService $service
+     * @param int $page
      * @return array   
      */
-    public function getVinsSaq(SAQService $service)
+    public function getVinsSaq(SAQService $service, int $page = 1)
     {
         // Récupérer les produits d'une page de résultats de la SAQ'
-        $resultat = $service->getWines();
+        $resultat = $service->getWines($page);
 
         // Filtrer le resultat pour ne garder que les bouteilles de vin
         $bouteillesVinFiltrees = $service->filtrerVins($resultat['bouteilles_de_vin']);
@@ -134,26 +135,35 @@ class VinController extends Controller
 
     public function store(SAQService $service)
     {
-        $bouteilles = $this->getVinsSaq($service);
-        foreach ($bouteilles as $bouteille) {
-            Vin::updateOrCreate(
-                ['sku' => $bouteille['saq_id']],
-                [
-                'name' => $bouteille['nom'],
-                'price' => $bouteille['prix'],
-                'country' => $bouteille['pays'],
-                'region' => $bouteille['region'],
-                'grape' => $bouteille['cepage'], 
-                'alcohol' => $bouteille['degre_alcool'],
-                'sugar' => $bouteille['taux_sucre'],
-                'producer' => '', // à ajouter au besoin
-                'litre' => $bouteille['format'],
-                'millesime' => $bouteille['annee'],
-                'image' => $bouteille['image_url'],
-                'couleur' => $bouteille['couleur']
-                ]
-                );
-        }
+        $total = $service->getWines()['total'];
+        $pages =  (int)ceil($total/100);
+        set_time_limit(240); // Augmente le tepms d'attente
+        if($pages || $pages !== 0){        
+            for($i = 1; $i <= $pages; $i++){
+                $bouteilles = $this->getVinsSaq($service, $i);
+                foreach ($bouteilles as $bouteille) {
+                    Vin::updateOrCreate(
+                        ['sku' => $bouteille['saq_id']],
+                        [
+                        'name' => $bouteille['nom'],
+                        'price' => $bouteille['prix'],
+                        'country' => $bouteille['pays'],
+                        'region' => $bouteille['region'],
+                        'grape' => $bouteille['cepage'], 
+                        'alcohol' => $bouteille['degre_alcool'],
+                        'sugar' => $bouteille['taux_sucre'],
+                        'producer' => '', // à ajouter au besoin
+                        'litre' => $bouteille['format'],
+                        'millesime' => $bouteille['annee'],
+                        'image' => $bouteille['image_url'],
+                        'couleur' => $bouteille['couleur']
+                        ]
+                    );
+                } 
+            }
+        }else{
+            return "Données sont corrompues";
+        }       
         return "Importation est terminée";
     }
 }
