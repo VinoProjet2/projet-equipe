@@ -27,6 +27,8 @@ const routes = [
   {
     path: "/usager/modifier/:id",
     component: ModifierUsager,
+  },
+  {
     path: "/profil-usager",
     component: ProfilUsager,
   },
