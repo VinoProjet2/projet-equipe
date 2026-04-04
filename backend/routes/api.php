@@ -28,4 +28,5 @@ Route::middleware('web')->group(function () {
     });
 
     Route::get('/afficher-usager', [UsagerController::class, 'afficherUsager']);
+    Route::delete('/supprimer-usager', [UsagerController::class, 'supprimerUsager']);
 });

@@ -35,6 +35,21 @@ export default {
         this.erreur = "Une erreur est survenue";
       }
     },
+    // Supprime le compte de l'usager connecté
+    async supprimerUsager() {
+      // todo : Ajouter une boite modale
+
+      try {
+        // suppression du compte de l'usager
+        await api.delete("/supprimer-usager");
+        // Redirige l'usager vers la page de connexion après la suppression
+        this.$router.push("/deconnexion");
+        // Redirige vers la page de connexion après la déconnexion
+        this.$router.push("/connexion-usager");
+      } catch (erreur) {
+        this.erreur = "Erreur lors de la suppression";
+      }
+    },
   },
   // Affiche le profil de l'usager dès que le composant est monté
   mounted() {

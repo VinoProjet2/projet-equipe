@@ -70,6 +70,7 @@ class UsagerController extends Controller
         ], 201);
     }
 
+    // Affiche les informations de l'usager connecté
     public function afficherUsager(Request $request)
     {
         return response()->json($request->user());
@@ -118,5 +119,15 @@ class UsagerController extends Controller
             'message' => 'Usager mis à jour avec succès',
             'data' => $usager
         ]);
+    }
+
+    // Supprimer le compte de l'usager connecté
+    public function supprimerUsager(Request $request)
+    {
+        $usager = $request->user();
+
+        $usager->delete();
+
+        return response()->json(['message' => 'Votre Compte est supprimé']);
     }
 }
