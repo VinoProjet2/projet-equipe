@@ -42,17 +42,16 @@ const routes = [
     path: "/catalogue",
     component: Home,
     meta: { requiresAuth: true },
-    //    to test pagination:
-    //    meta: { requiresAuth: false },
   },
   {
     path: "/creer-cellier",
     component: CreationCellier,
+    meta: { requiresAuth: true },
   },
-
   {
     path: "/dashboard",
     component: Dashboard,
+    meta: { requiresAuth: true },
   },
   // redirige les URL non reconnu (dans notre code) pour /connexion-usager
   {

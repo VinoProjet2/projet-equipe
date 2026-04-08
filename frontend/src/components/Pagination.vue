@@ -1,17 +1,17 @@
 <template>
   <div class="pagination">
     <div class="nav-group">
-      <button 
-        :disabled="page === 1" 
+      <button
+        :disabled="page === 1"
         @click="$emit('prev')"
       >
         &lsaquo;
       </button>
-      
+
       <span class="page-indicator">{{ page }} / {{ totalPages }}</span>
-      
-      <button 
-        :disabled="page === totalPages" 
+
+      <button
+        :disabled="page === totalPages"
         @click="$emit('next')"
       >
         &rsaquo;
@@ -100,6 +100,6 @@ select {
   cursor: pointer;
   outline: none;
   padding-right: 4px;
-  -webkit-appearance: none; /* Removes default mobile styling */
+  -webkit-appearance: none; /* Enleve le style defaut pour mobile */
 }
 </style>

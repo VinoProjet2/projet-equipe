@@ -1,4 +1,5 @@
 <template>
+  <Navbar />
   <div class="hero-container">
     <img src="../../assets/img/cellier.jpg" class="hero-image" />
     <img src="../../assets/img/bouteille.png" class="bouteille" />
@@ -36,11 +37,13 @@
 import axios from "axios";
 import Cellier from "../../components/Cellier.vue";
 import { Plus } from "lucide-vue-next";
+import Navbar from "../../components/Navbar.vue";
 
 export default {
   components: {
     Cellier,
     Plus,
+    Navbar
   },
 
   data() {

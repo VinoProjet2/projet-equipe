@@ -88,6 +88,7 @@
       @prev="prevPage"
       @changePerPage="changePerPage"
     />
+    <div class="espace-catalogue"></div>
   </div>
 </template>
 

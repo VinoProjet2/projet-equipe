@@ -7,7 +7,6 @@
         @ajout-du-vin="ajoutDuVin"
       />
     </div>
-    <div class="espace-catalogue"></div>
 </template>
 
 <script>
