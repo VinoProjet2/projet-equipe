@@ -24,9 +24,9 @@ Route::get('/usagers/{id}', [UsagerController::class, 'show']);
 
 Route::middleware('web')->group(function () {
 
+    //Route pour la connexion et deconnexion
     Route::post('/', [AuthController::class, 'store'])->name('connexion-usager');
     Route::post('/deconnexion', [AuthController::class, 'destroy'])->name('deconnexion');
-
     Route::get('/csrf-token', function () {
         return response()->json(['csrf_token' => csrf_token()]);
     });
@@ -34,9 +34,10 @@ Route::middleware('web')->group(function () {
     Route::get('/afficher-usager', [UsagerController::class, 'afficherUsager']);
     Route::delete('/supprimer-usager', [UsagerController::class, 'supprimerUsager']);
 
+    // Route pour verifier si un usager est connecter
     Route::get('/usager', function () {
-        $user = auth()->user();
-        return $user ? response()->json($user) : response()->json(null);
+        $usager = auth()->user();
+        return $usager ? response()->json($usager) : response()->json(null);
     });
 
     // Routes pour la gestion des celliers

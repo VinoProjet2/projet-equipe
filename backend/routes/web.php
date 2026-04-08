@@ -19,6 +19,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/vins', [VinController::class, 'index']);
 Route::get('/vins_saq', [VinController::class, 'getVinsSaq']);
 Route::get('/import-vins', [VinController::class, 'store']);
-
-//Usager
-// Route::post('/usagers', [UsagerController::class, 'store']);

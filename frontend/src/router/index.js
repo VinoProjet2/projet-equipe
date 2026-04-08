@@ -57,24 +57,33 @@ const router = createRouter({
   routes,
 });
 
+// Ceci fonctionnent avant chaque navigation de la prochaine page pour verifier si l'usager est connecter
+// to: ou l'usager veut aller
+// from: l'usager vient d'ou
+// next(): pour continuer la navigation
 router.beforeEach(async (to, from, next) => {
+
   const authStore = useAuthStore();
 
+  //verifie si fetchUsager est en cours grace a authStore.loading, et rejoue la verification pour vraiment voir si l'usager est null ou pas
   if (authStore.loading) {
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await authStore.waitForLoadingToFinish();
     return next(to);
   }
 
-  if (authStore.usager === null && !authStore.loading) {
+  // Utile pour rester connecter au rechargement de la page
+  if (authStore.usager === null && authStore.loading === false) {
     await authStore.fetchUsager();
   }
 
-  const estConnecter =
+    // verifier si un Usager est connecter: authStore contient .usager et un objet qui a un proprieter (id / courriel / mot de passe)
+    const estConnecter =
     authStore.usager &&
     typeof authStore.usager === "object" &&
     Object.keys(authStore.usager).length > 0;
 
-  if (to.meta.requiresAuth && !estConnecter) {
+  // si la page a besoin d'un connexion usager et il ny a pas d'usager connecter on retourne sur la page de connexion sinon; on laisse passer
+  if (to.meta.requiresAuth && estConnecter === false) {
     next("/connexion-usager");
   } else {
     next();
