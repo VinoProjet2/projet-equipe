@@ -38,38 +38,6 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from "vue";
-import api, { fetchCsrfToken } from "../../api";
-
-const courriel = ref("");
-const mot_de_passe = ref("");
-const erreur = ref("");
-const loading = ref(false);
-
-async function connexion() {
-  loading.value = true;
-  erreur.value = "";
-
-  try {
-    await fetchCsrfToken();
-    const response = await api.post("/connexion-usager", {
-      courriel: courriel.value,
-      mot_de_passe: mot_de_passe.value,
-    });
-  } catch (err) {
-    if (err.response) {
-      erreur.value = "Erreur de connexion";
-    } else if (err.request) {
-      erreur.value = "Impossible de joindre le serveur";
-    } else {
-      erreur.value = "Une erreur est survenue";
-    }
-  } finally {
-    loading.value = false;
-  }
-}
-</script>
 <script>
 import api, { fetchCsrfToken } from "../../api";
 import { useAuthStore } from "../../stores/auth";
