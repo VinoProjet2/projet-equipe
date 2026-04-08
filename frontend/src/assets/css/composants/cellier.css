@@ -1,0 +1,46 @@
+.nom-cellier {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  border: 1px solid var(--noir-semi-transparent);
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+
+.cellier-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.cellier-img {
+  width: 50px;
+}
+
+.cellier-nom {
+  font-weight: 500;
+  margin-left: 15px;
+}
+
+.btn-cellier {
+  border-radius: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  width: auto;
+  padding: 5px 5px;
+  text-align: center;
+  border-radius: 2px;
+  background-color: var(--rouge-vin-profond);
+  color: var(--blanc-fonce);
+  cursor: pointer;
+  border: none;
+  margin-bottom: 5px;
+}
+.bouton-celleir {
+  display: flex;
+  flex-direction: column;
+}

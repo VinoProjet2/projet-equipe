@@ -1,0 +1,103 @@
+.hero-container {
+  position: relative;
+  width: 100%;
+  height: 20vh;
+  border-radius: 5px;
+  margin-top: 5px;
+  margin-bottom: 30px;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.bouteille {
+  position: absolute;
+  bottom: -20px;
+  left: 10px;
+  width: 70px;
+}
+
+.bouteille-total {
+  left: 10px;
+  width: 70px;
+}
+
+.infos {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.infos-stock,
+.infos-valeur {
+  border: 1px solid var(--noir-semi-transparent);
+  width: fit-content;
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%;
+  display: flex;
+  flex-wrap:;
+}
+
+.valeur-img {
+  width: 80px;
+}
+
+.entete-cellier {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn-entete-cellier {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  width: auto;
+  padding: 8px 16px;
+  text-align: center;
+  border-radius: 2px;
+  background-color: var(--rouge-vin-profond);
+  color: var(--blanc-fonce);
+  cursor: pointer;
+  border: none;
+  margin-right: 15px;
+}
+
+.entete-cellier h2 {
+  flex: 1;
+  margin: 0;
+}
+@media (min-width: 768px) {
+  .hero-container {
+    height: 75vh;
+  }
+
+  .bouteille {
+    width: 200px;
+    bottom: 15px;
+    left: 15px;
+  }
+
+  .infos-stock {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-container {
+    height: 100vh;
+  }
+
+  .bouteille {
+    width: 200px;
+    bottom: 20px;
+    left: 20px;
+  }
+}

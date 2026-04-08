@@ -8,6 +8,7 @@ import Cart from "../pages/Cart.vue";
 import ConnexionUsager from "../pages/usager/ConnexionUsager.vue";
 import ProfilUsager from "../pages/usager/ProfilUsager.vue";
 import CreationCellier from "../pages/cellier/CreationCellier.vue";
+import Dashboard from "../pages/cellier/Dashboard.vue";
 
 const routes = [
   {
@@ -48,6 +49,10 @@ const routes = [
     path: "/creer-cellier",
     component: CreationCellier,
   },
+  ,
+  {
+    path: "/dashboard",
+    component: Dashboard,
   // redirige les URL non reconnu (dans notre code) pour /connexion-usager
   {
     path: "/:pathMatch(.*)*",

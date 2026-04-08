@@ -10,9 +10,13 @@ class CellierController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $celliers = Cellier::where('usager_id', $request->user()->id)->get();
+
+        return response()->json([
+            'data' => $celliers
+        ]);
     }
 
     /**

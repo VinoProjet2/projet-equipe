@@ -1,0 +1,37 @@
+<template>
+  <div class="nom-cellier">
+    <div class="cellier-item">
+      <div>
+        <img
+          src="../../public/bouteille.png"
+          alt="bouteille"
+          class="cellier-img"
+        />
+        <span class="cellier-nom">{{ cellier.nom }}</span>
+      </div>
+      <div>
+        <span>6 bts</span>
+      </div>
+    </div>
+
+    <div class="bouton-celleir">
+      <button class="btn btn-cellier"><Trash class="icons" /></button>
+      <button class="btn btn-cellier"><PencilLine class="icons" /></button>
+    </div>
+  </div>
+</template>
+
+<script>
+import { Trash, PencilLine } from "lucide-vue-next";
+export default {
+  components: {
+    Trash,
+    PencilLine,
+  },
+  name: "Cellier",
+  props: {
+    cellier: Object,
+  },
+  return() {},
+};
+</script>

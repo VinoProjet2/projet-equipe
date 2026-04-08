@@ -3,7 +3,7 @@
     <router-link to="/catalogue" class="nav-item">
       <Home class="icon" /> <span>Accueil</span>
     </router-link>
-    <router-link to="/celliers" class="nav-item">
+    <router-link to="/dashboard" class="nav-item">
       <Wine class="icon" /><span>Celliers</span>
     </router-link>
     <router-link to="/liste-achats" class="nav-item">
@@ -15,6 +15,5 @@
   </nav>
 </template>
 <script setup>
-import { ref } from "vue";
 import { Home, Wine, ShoppingBasket, User } from "lucide-vue-next";
 </script>

@@ -108,7 +108,7 @@ export default {
     },
     ajoutDuVin() {
       this.$emit("ajout-du-vin", this.vin);
-      this.$router.push("/cart");
+      this.$router.push("/liste-achats");
     },
   },
 };
