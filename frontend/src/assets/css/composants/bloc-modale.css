@@ -48,7 +48,7 @@
   background: var(--gris-moyen);
 }
 
-.bloc-succes {
+.bloc-modale-succes {
   position: sticky;
   top: 0;
   z-index: 1;

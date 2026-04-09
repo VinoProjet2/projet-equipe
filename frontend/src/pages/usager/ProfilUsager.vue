@@ -6,8 +6,6 @@
       <p v-if="erreur">{{ erreur }}</p>
       <div v-if="usager" class="profil-contenu">
         <p class="profil-data">Nom : {{ usager.nom }}</p>
-        <!-- todo : Afficher le prénom de l'usager -->
-        <!-- <p class="profil-data">Prénom : {{ usager.prenom }}</p> -->
         <p class="profil-data">Courriel : {{ usager.courriel }}</p>
       </div>
     </div>

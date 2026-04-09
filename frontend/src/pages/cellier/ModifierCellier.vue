@@ -1,6 +1,6 @@
 <template>
   <Navbar />
-  <div class="container">
+  <div>
     <form @submit.prevent="modifierCellier" class="bloc-form">
       <h1 class="profil-titre">Modifier le cellier</h1>
       <div>

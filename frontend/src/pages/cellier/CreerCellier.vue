@@ -1,8 +1,8 @@
 <template>
   <Navbar />
-  <div class="container">
+  <div>
     <form @submit.prevent="creerCellier" class="bloc-form">
-      <h1 class="profil-titre">Création de cellier</h1>
+      <h2 class="profil-titre">Création de cellier</h2>
       <div>
         <label>Choisir un nom</label>
         <input type="text" v-model="nom" placeholder="Votre nom de cellier" />

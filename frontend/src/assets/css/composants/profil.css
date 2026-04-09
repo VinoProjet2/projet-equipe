@@ -4,13 +4,13 @@
   min-height: 100vh;
   margin: 0;
   padding: var(--espace-moyen);
-  background: var(--gris-clair-2);
 }
 
 .profil-carte,
 .profil-action-icone {
   background: var(--gris-tres-clair-2);
   border-radius: 15px;
+  background: var(--gris-clair-2);
 }
 
 .profil-carte {
@@ -19,7 +19,7 @@
 }
 
 .profil-titre {
-  margin-bottom: var(--espace-grand);
+  margin-bottom: var(--espace-gros);
   text-align: center;
   font-size: var(--fs-24);
   font-weight: 700;

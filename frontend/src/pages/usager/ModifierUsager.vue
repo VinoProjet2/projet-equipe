@@ -1,6 +1,6 @@
 <template>
   <Navbar />
-  <div v-if="messageSucces" class="bloc-succes">
+  <div v-if="messageSucces" class="bloc-modale-succes">
     {{ messageSucces }}
   </div>
   <div class="container">
@@ -80,7 +80,7 @@ export default {
       try {
         const id = this.$route.params.id;
         const response = await axios.get(
-          `http://localhost:8000/api/usagers/${id}`
+          `http://localhost:8000/api/usagers/${id}`,
         );
 
         this.nom = response.data.data.nom;
@@ -107,7 +107,7 @@ export default {
             nom: this.nom,
             courriel: this.courriel,
             mot_de_passe: this.mot_de_passe,
-          }
+          },
         );
         this.messageSucces = "Votre compte a été mis à jour avec succès !";
         setTimeout(() => {
