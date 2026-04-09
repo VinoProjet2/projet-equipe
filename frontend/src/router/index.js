@@ -6,7 +6,8 @@ import Home from "../pages/Home.vue";
 import Cart from "../pages/Cart.vue";
 import ConnexionUsager from "../pages/usager/ConnexionUsager.vue";
 import ProfilUsager from "../pages/usager/ProfilUsager.vue";
-import CreationCellier from "../pages/cellier/CreationCellier.vue";
+import CreerCellier from "../pages/cellier/CreerCellier.vue";
+import ModifierCellier from "../pages/cellier/ModifierCellier.vue";
 
 const routes = [
   {
@@ -35,7 +36,11 @@ const routes = [
   },
   {
     path: "/creer-cellier",
-    component: CreationCellier,
+    component: CreerCellier,
+  },
+  {
+    path: "/modifier-cellier",
+    component: ModifierCellier,
   },
 ];
 

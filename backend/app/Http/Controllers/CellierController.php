@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cellier;
+use App\Models\Usager;
 use Illuminate\Http\Request;
 
 class CellierController extends Controller
@@ -73,9 +74,37 @@ class CellierController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cellier $cellier)
+    public function update(Request $request, $id)
     {
-        //
+
+        $cellier = Cellier::findOrFail($id);
+        $usager = Usager::findOrFail($cellier->usager_id);
+
+        // Vérifier si l'usager connecté est le propriétaire du cellier
+
+        if ($usager->courriel !== auth()->id()) {
+            return response()->json([
+                'message' => 'Non autorisé à modifier ce cellier'
+            ], 403);
+        }
+
+        // Validation des données d'entrée
+        $request->validate(
+            [
+                'nom' => 'required|string|min:2|max:50|unique:celliers,nom',
+            ],
+            [
+                'nom.required' => 'Le nom est obligatoire.',
+                'nom.min' => 'Le nom doit contenir au moins 2 caractères.',
+                'nom.max' => 'Le nom ne peut pas dépasser 50 caractères.',
+                'nom.unique' => 'Ce nom existe déjà.',
+            ]
+        );
+
+        // Mise à jour du cellier
+        $cellier->update([
+            'nom' => $request->nom,
+        ]);
     }
 
     /**
