@@ -1,7 +1,9 @@
 <template>
   <Navbar />
   <div class="home">
-    <h2 class="h2">Catalogue</h2>
+    <div class="banniere">
+      <h2 class="banniere-titre">Explorez les vins de la SAQ</h2>
+    </div>
     <!-- <div class="filtre"> -->
     <!-- <div class="alignement">
           <button class="filte-button" @click="toggleFilter">

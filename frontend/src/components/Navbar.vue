@@ -1,7 +1,7 @@
 <template>
   <nav class="mobile-navbar">
     <router-link to="/catalogue" class="nav-item">
-      <Home class="icon" /> <span>Accueil</span>
+      <Home class="icon" /> <span>Catalogue</span>
     </router-link>
     <router-link to="/dashboard" class="nav-item">
       <Wine class="icon" /><span>Celliers</span>

@@ -9,9 +9,6 @@
         />
         <span class="cellier-nom">{{ cellier.nom }}</span>
       </div>
-      <div>
-        <span>6 bts</span>
-      </div>
     </div>
 
     <div class="bouton-celleir">

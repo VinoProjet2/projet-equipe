@@ -36,7 +36,7 @@ class CellierController extends Controller
         // Validation des données d'entrée
         $request->validate(
             [
-                'nom' => 'required|string|min:2|max:50|unique:celliers,nom',
+                'nom' => 'required|string|min:2|max:50',
             ],
             [
                 'nom.required' => 'Le nom est obligatoire.',
@@ -95,7 +95,7 @@ class CellierController extends Controller
         // Validation des données d'entrée
         $request->validate(
             [
-                'nom' => 'required|string|min:2|max:50|unique:celliers,nom',
+                'nom' => 'required|string|min:2|max:50',
             ],
             [
                 'nom.required' => 'Le nom est obligatoire.',

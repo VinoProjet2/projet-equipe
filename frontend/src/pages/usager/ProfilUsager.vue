@@ -1,8 +1,10 @@
 <template>
   <Navbar />
   <div class="profil-page">
+    <div class="banniere">
+      <h2 class="banniere-titre">Gérez vote compte</h2>
+    </div>
     <div class="profil-carte">
-      <h1 class="profil-titre">Mon profil</h1>
       <p v-if="erreur">{{ erreur }}</p>
       <div v-if="usager" class="profil-contenu">
         <p class="profil-data">Nom : {{ usager.nom }}</p>

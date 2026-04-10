@@ -1,29 +1,10 @@
 <template>
   <Navbar />
-  <div class="hero-container">
-    <img src="../../assets/img/cellier.jpg" class="hero-image" />
-    <img src="../../assets/img/bouteille.png" class="bouteille" />
+
+  <div class="banniere">
+    <h1 class="banniere-titre">Maîtrisez votre cave comme un sommelier</h1>
   </div>
 
-  <div class="infos">
-    <div class="infos-stock">
-      <img
-        src="../../assets/img/bouteille.png"
-        alt="bouteille vin"
-        class="bouteille-total"
-      />
-      <p>En stock:<strong>13</strong></p>
-    </div>
-    <div class="infos-valeur">
-      <img
-        src="../../assets/img/valeur.png"
-        alt="image monnaie"
-        class="valeur-img"
-      />
-
-      <p>Valeur :<strong>256 $</strong></p>
-    </div>
-  </div>
   <div class="entete-cellier">
     <h2>Vos celliers</h2>
     <button class="btn btn-entete-cellier" @click="creerCellier">
@@ -92,7 +73,7 @@ export default {
       try {
         // on attend que la requête DELETE se termine
         await axios.delete(
-          `http://127.0.0.1:8000/api/supprimer-cellier/${this.idASupprimer}`
+          `http://127.0.0.1:8000/api/supprimer-cellier/${this.idASupprimer}`,
         );
 
         // mettre à jour la liste des celliers
