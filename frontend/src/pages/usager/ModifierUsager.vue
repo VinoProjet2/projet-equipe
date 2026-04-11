@@ -87,11 +87,11 @@ export default {
         const response = await api.put(`/usagers/${id}`, {
           nom: this.nom,
           courriel: this.courriel,
-          mot_de_passe: this.mot_de_passe,
         });
         this.messageSucces = "Votre compte a été mis à jour avec succès !";
         setTimeout(() => {
           this.messageSucces = "";
+          this.$router.push("/connexion-usager");
         }, 3000);
       } catch (erreur) {
         if (erreur.response && erreur.response.status === 422) {
