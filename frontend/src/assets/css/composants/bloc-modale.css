@@ -52,10 +52,9 @@
   position: sticky;
   top: 0;
   z-index: 1;
-  background: #d4edda;
-  color: #155724;
-  padding: 10px;
-  margin-bottom: 15px;
+  background: var(--vert-clair);
+  color: var(--vert-fonce);
+  padding: var(--espace-grand-mini);
   border-radius: 5px;
   text-align: center;
 }
