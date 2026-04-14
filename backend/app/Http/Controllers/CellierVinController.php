@@ -12,13 +12,13 @@ class CellierVinController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($id)
     {
-        $cellier = Cellier::with(['cellierVins.vin'])->find($cellierId);
+        $cellier = Cellier::with(['cellierVins.vin'])->find($id);
 
         if ($cellier == false) {
             return response()->json([
-                'message' => 'Ce cellier nest pas trouvé'
+                'message' => "Le details de ce cellier n'est pas trouvé"
             ], 404);
         }
 

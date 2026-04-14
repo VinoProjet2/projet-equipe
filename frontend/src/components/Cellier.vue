@@ -7,7 +7,7 @@
           alt="bouteille"
           class="cellier-img"
         />
-        <span class="cellier-nom">{{ cellier.nom }}</span>
+        <router-link :to="`/detail-cellier/${cellier.id}`" class="cellier-nom">{{ cellier.nom }}</router-link>
       </div>
     </div>
 

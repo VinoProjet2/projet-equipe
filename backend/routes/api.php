@@ -53,5 +53,5 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::post('/ajouter-bouteille', [CellierVinController::class, 'store']);
 
     //Routes pour la gestion des bouteilles dans les celliers (CellierVins)
-    Route::get('/celliers/{id}/vins', [CellierVinController::class, 'index']);
+    Route::get('/detail-cellier/{id}', [CellierVinController::class, 'index']);
 });
