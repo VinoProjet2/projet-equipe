@@ -39,6 +39,7 @@ export default {
     };
   },
   methods: {
+    // contient le lien pour nous mettre a jour sur la page - cellier-vin ou detailBouteille
     voirDetail() {
       this.$router.push(`/cellier-vin/${this.id}`);
     },

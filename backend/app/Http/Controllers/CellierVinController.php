@@ -13,17 +13,22 @@ class CellierVinController extends Controller
 {
     /**
      * Envoy le cellier avec les vins dans le cellier au frontend
+     * @param int $id du cellierVin dans la table
+     * @return JSON
      */
     public function index($id)
     {
+        // Va chercher dans la DB le cellier qui correspond a $id
         $cellier = Cellier::with(['cellierVins.vin'])->find($id);
 
+        //Si trouve pas da cellier correspondant
         if ($cellier == false) {
             return response()->json([
                 'message' => "Le details de ce cellier n'est pas trouvé"
             ], 404);
         }
 
+        //retourne le cellier correspondant et les vins (incluant la quantite)
         return response()->json([
             'cellier' => $cellier,
             'vins' => $cellier->cellierVins
@@ -89,7 +94,7 @@ class CellierVinController extends Controller
      * La méthode affiche les détails d'une bouteill spécifique appartenant a l'usager connecté
      * La méthode récupére une entrée de la table 'cellier_vins' en fonction de son id
      * en incluant les relations avec le la table vin et la table cellier
-     * ELle vérifie également que la bouteille appartient bien a un cellier associé a l'uager actuellement 
+     * ELle vérifie également que la bouteille appartient bien a un cellier associé a l'uager actuellement
      * connecté
      * Elle retourne les informations détaillées de la bouteille sous forme de JSON
      * @param int  $id de la boouteille dans le cellier
@@ -146,7 +151,8 @@ class CellierVinController extends Controller
     }
 
     /**
-     *
+     * Supprime un vin dans un cellier
+     * @param CellierVin id du cellierVin a supprimer
      */
     public function destroy(CellierVin $cellierVin)
     {

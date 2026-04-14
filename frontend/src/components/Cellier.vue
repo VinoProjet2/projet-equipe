@@ -1,6 +1,6 @@
 <template>
-  <div @click="voirDetailVinCellier" class="nom-cellier">
-    <div class="cellier-item">
+  <div class="nom-cellier">
+    <div @click="voirDetailVinCellier" class="cellier-item">
       <div class="vin-cellier-carte">
         <img
           src="../../public/bouteille.png"

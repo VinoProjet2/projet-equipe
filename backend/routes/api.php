@@ -40,21 +40,22 @@ Route::middleware('web')->group(function () {
 
 // Routes protégées par l'authentification
 Route::middleware(['web', 'auth'])->group(function () {
+
     // Routes pour la gestion des usagers
     Route::get('/afficher-usager', [UsagerController::class, 'afficherUsager']);
     Route::delete('/supprimer-usager', [UsagerController::class, 'supprimerUsager']);
     Route::put('/usagers/{id}', [UsagerController::class, 'update']);
     Route::get('/usagers/{id}', [UsagerController::class, 'show']);
+
     // Routes pour la gestion des celliers
     Route::post('/creer-cellier', [CellierController::class, 'store']);
     Route::put('/modifier-cellier/{id}', [CellierController::class, 'update']);
     Route::get('/celliers', [CellierController::class, 'index']);
     Route::delete('/supprimer-cellier/{cellier}', [CellierController::class, 'destroy']);
-    Route::get('/cellier-vin/{id}', [CellierVinController::class, 'show']);
-    // Route pour gerer les bouteilles dans les celliers
-    Route::post('/ajouter-bouteille', [CellierVinController::class, 'store']);
 
-    //Routes pour la gestion des bouteilles dans les celliers (CellierVins)
+    // Routes pour gerer les bouteilles dans les celliers
+    Route::post('/ajouter-bouteille', [CellierVinController::class, 'store']);
     Route::get('/detail-cellier/{id}', [CellierVinController::class, 'index']);
     Route::delete('/cellier-vins/{cellierVin}', [CellierVinController::class, 'destroy']);
+    Route::get('/cellier-vin/{id}', [CellierVinController::class, 'show']);
 });

@@ -47,8 +47,10 @@ export default {
     };
   },
   methods: {
+    // Gere l'affichage de toute les bouteilles (avec leur quantite), qui sont dans ce cellier
     async afficherDetailCellier() {
       try {
+        // le backend retourne les infos du detail-cellier (incluant - le cellier, les vins(avec leur quantite))
         const id = this.$route.params.id;
         const reponse = await api.get(`/detail-cellier/${id}`);
 
@@ -59,21 +61,25 @@ export default {
         this.erreur = "Erreur lors de l'affichage des details de ce cellier";
       }
     },
+    //Ouvrire la modale de suppression de bouteille du cellier
     ouvrirModale(id) {
       this.idASupprimer = id;
       this.afficherModale = true;
     },
+    // Une fois qui l'utilisateur confirme la suppression d'un bouteille du cellier
     async confirmerSuppression() {
         try{
+          // supprimer grace a cette route dans le backend, qui supprime dans la DB
           await api.delete(`/cellier-vins/${this.idASupprimer}`);
 
           // Supprimer localement
           this.vins = this.vins.filter(item => item.id !== this.idASupprimer);
 
+          // enlever l'affichage du Modale de suppression
           this.afficherModale = false;
           this.idASupprimer = null;
 
-        }catch(err) {
+        } catch(err) {
             this.erreur = "Erreur lors de la suppression d'une bouteille dans ce cellier";
         }
     }
