@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CellierController;
 use App\Http\Controllers\CellierVinController;
 use App\Http\Controllers\UsagerController;
+use App\Http\Controllers\VinController;
 
 
 /*
@@ -62,4 +63,7 @@ Route::middleware(['web', 'auth'])->group(function () {
 
     //Recherche bouteille dans les celliers
     Route::get('/bouteilles', [CellierController::class, 'bouteillesUsager']);
+
+    //Filtrer les bouteilles du catalogue
+    Route::get('/vins', [VinController::class, 'index']);
 });

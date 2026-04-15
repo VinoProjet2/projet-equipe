@@ -33,7 +33,7 @@
   right: -100%;
   height: 100%;
   width: 550px;
-  max-width: 80%;
+  max-width: 73%;
   background: var(--blanc-clair);
   box-shadow: -3px 0 10px var(--noir-semi-transparent);
   transition: right 0.3s ease-in-out;

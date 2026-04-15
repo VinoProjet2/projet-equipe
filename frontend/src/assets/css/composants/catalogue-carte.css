@@ -234,3 +234,8 @@
   text-align: center;
   box-sizing: border-box;
 }
+
+.btn-recherche.catalogue {
+  margin-bottom: 15px;
+  justify-content: space-between;
+}

@@ -26,13 +26,72 @@ class VinController extends Controller
         $perPage = (int) $request->get('per_page', 12);
         $recherche = $request->get('recherche', '');
 
+        $filters = $request->get('filters', []);
+
         $query = Vin::query();
 
+        if (!empty($filters['countries'])) {
+            $query->whereIn('pays', $filters['countries']);
+        }
+
+        if (!empty($filters['regions'])) {
+            $query->where(function ($q) use ($filters) {
+                foreach ($filters['regions'] as $region) {
+                    $q->orWhere('region', 'like', "%$region%");
+                }
+            });
+        }
+
+        if (!empty($filters['cepages'])) {
+            $query->where(function ($q) use ($filters) {
+                foreach ($filters['cepages'] as $cepage) {
+                    $q->orWhere('cepage', 'like', "%$cepage%");
+                }
+            });
+        }
+
+        if (!empty($filters['prix'])) {
+            $min = min($filters['prix']);
+            $max = max($filters['prix']);
+            $query->whereBetween('prix', [(float)$min, (float)$max]);
+        }
+
+        if (!empty($filters['formats'])) {
+            $query->whereIn('format', $filters['formats']);
+        }
+
+        if (!empty($filters['degres'])) {
+            $query->whereIn('degre_alcool', $filters['degres']);
+        }
+
+        if (!empty($filters['millesimes'])) {
+            $query->whereIn('annee', $filters['millesimes']);
+        }
+
+        if (!empty($filters['couleur'])) {
+            $query->whereIn('couleur', $filters['couleur']);
+        }
+
+
         $wines = $query->paginate($perPage, ['*'], 'page', $page);
+
+
+        $toutLesFilters = [
+            'countries' => Vin::distinct()->pluck('pays')->filter()->values(),
+            'regions' => Vin::distinct()->pluck('region')->filter()->values(),
+            'cepages' => Vin::distinct()->pluck('cepage')->filter()->values(),
+            'prix' => Vin::distinct()->pluck('prix')->filter()->values(),
+            'formats' => Vin::distinct()->pluck('format')->filter()->values(),
+            'degres' => Vin::distinct()->pluck('degre_alcool')->filter()->values(),
+            'millesimes' => Vin::distinct()->pluck('annee')->filter()->values(),
+            'couleur' => Vin::distinct()->pluck('couleur')->filter()->values(),
+
+        ];
 
         return response()->json([
             'data' => $wines->items(),
             'total' => $wines->total(),
+            'filters' => $toutLesFilters,
         ]);
     }
 

@@ -4,7 +4,6 @@
     <div class="banniere">
       <h2 class="banniere-titre">Catalogue des vins</h2>
     </div>
-
     <div class="search-container">
       <Search class="search-icon" />
       <input
@@ -14,6 +13,76 @@
         @input="rechercherVins"
         class="search-input"
       />
+    </div>
+    <div class="filtre">
+      <div class="btn-recherche catalogue">
+        <button class="btn btn-entete-cellier" @click="toggleFilter">
+          <ListFilter class="icon" /><span>Filtrer </span>
+        </button>
+        <button class="btn btn-entete-cellier">
+          <ArrowDownUp class="icon" /><span>Trier </span>
+        </button>
+      </div>
+
+      <div
+        class="filtre-ouvrir"
+        :class="{ active: showFilter }"
+        @click="toggleFilter"
+      ></div>
+
+      <aside class="filter-panel" :class="{ active: showFilter }">
+        <div class="filter-header">
+          <h2>Filtres</h2>
+        </div>
+
+        <ul class="filter-list">
+          <ColorFilter v-model="selected.couleur" />
+          <FilterSection
+            title="Pays"
+            :items="countries"
+            v-model="selected.countries"
+            clearable
+          />
+          <FilterSection
+            title="Régions"
+            :items="regions"
+            v-model="selected.regions"
+            clearable
+          />
+          <FilterSection
+            title="Cépages"
+            :items="cepages"
+            v-model="selected.cepages"
+            clearable
+          />
+          <FilterSection
+            title="Prix ($)"
+            :items="prix"
+            v-model="selected.prix"
+            clearable
+          />
+          <FilterSection
+            title="Format (ml)"
+            :items="formats"
+            v-model="selected.formats"
+            clearable
+          />
+          <FilterSection
+            title="Degré (%)"
+            :items="degres"
+            :formatter="formatAlcohol"
+            v-model="selected.degres"
+            clearable
+          />
+
+          <FilterSection
+            title="Millésime"
+            :items="millesimes"
+            v-model="selected.millesimes"
+            clearable
+          />
+        </ul>
+      </aside>
     </div>
 
     <WineGrid v-if="!loading" :vins="vins" />
@@ -36,7 +105,9 @@ import { useWineStore } from "../stores/wineStore";
 import WineGrid from "../components/WineGrid.vue";
 import Navbar from "../components/Navbar.vue";
 import Pagination from "../components/Pagination.vue";
-import { Search } from "lucide-vue-next";
+import { Search, ListFilter, ArrowDownUp } from "lucide-vue-next";
+import FilterSection from "../components/FilterSelection.vue";
+import ColorFilter from "../components/ColorFilter.vue";
 
 export default {
   components: {
@@ -44,6 +115,10 @@ export default {
     Navbar,
     Pagination,
     Search,
+    ListFilter,
+    ArrowDownUp,
+    FilterSection,
+    ColorFilter,
   },
 
   data() {
@@ -58,12 +133,11 @@ export default {
         prix: [],
         formats: [],
         degres: [],
-        producteurs: [],
         millesimes: [],
         couleur: [],
       },
       wineStore: useWineStore(),
-      termeDeRecherche: '',
+      termeDeRecherche: "",
     };
   },
 
@@ -102,7 +176,7 @@ export default {
     },
 
     total() {
-    return this.wineStore.total;
+      return this.wineStore.total;
     },
 
     debut() {
@@ -134,7 +208,6 @@ export default {
   },
 
   methods: {
-
     formatAlcohol(value) {
       if (!value) return "-";
       const num = parseFloat(value);
@@ -147,13 +220,36 @@ export default {
 
     async fetchWines() {
       const filters = {};
-      await this.wineStore.fetchAllWines(this.page, this.perPage, filters, this.termeDeRecherche);
+      if (this.selected.countries.length)
+        filters.countries = this.selected.countries;
+      if (this.selected.regions.length) filters.regions = this.selected.regions;
+      if (this.selected.cepages.length) filters.cepages = this.selected.cepages;
+      if (this.selected.prix.length) {
+        filters.prix = this.selected.prix;
+      }
+      if (this.selected.formats.length) filters.formats = this.selected.formats;
+      if (this.selected.degres.length) filters.degres = this.selected.degres;
+      if (this.selected.millesimes.length)
+        filters.millesimes = this.selected.millesimes;
+      if (this.selected.couleur.length) filters.couleur = this.selected.couleur;
+      await this.wineStore.fetchAllWines(this.page, this.perPage, filters);
+      await this.wineStore.fetchAllWines(
+        this.page,
+        this.perPage,
+        filters,
+        this.termeDeRecherche,
+      );
     },
 
     // pour la barre de recherche, va chercher tous les vins contenu dans cette recherche
     async rechercherVins() {
-        const filters = {};
-        await this.wineStore.fetchAllWines(0, this.perPage, filters, this.termeDeRecherche);
+      const filters = {};
+      await this.wineStore.fetchAllWines(
+        0,
+        this.perPage,
+        filters,
+        this.termeDeRecherche,
+      );
     },
 
     goToPage(p) {
