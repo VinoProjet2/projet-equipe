@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cellier;
 use App\Models\Usager;
 use Illuminate\Http\Request;
+use App\Models\CellierVin;
 
 class CellierController extends Controller
 {
@@ -108,6 +109,24 @@ class CellierController extends Controller
         $cellier->update([
             'nom' => $request->nom,
         ]);
+    }
+
+    /**
+     * Methode qui permet de charger les bouteilles des celliers de l'usager connecté
+     *
+     * @return void
+     */
+    public function bouteillesUsager()
+    {
+        $usager = auth()->user();
+
+        $bouteilles = CellierVin::with(['vin', 'cellier'])
+            ->whereHas('cellier', function ($query) use ($usager) {
+                $query->where('usager_id', $usager->id);
+            })
+            ->get();
+
+        return response()->json($bouteilles);
     }
 
     /**

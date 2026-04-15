@@ -12,6 +12,7 @@ import DetailBouteille from "../pages/bouteille/DetailBouteille.vue";
 import DetailCellier from "../pages/cellierVin/DetailCellier.vue";
 import AjouterBouteille from "../pages/bouteille/AjouterBouteille.vue";
 import AjouterBouteillePerso from "../pages/bouteille/AjouterBouteillePerso.vue";
+import RechercheBouteilleCellier from "../pages/cellier/RechercheBouteilleCellier.vue";
 
 const routes = [
   {
@@ -73,6 +74,12 @@ const routes = [
   {
     path: "/bouteille/AjouterBouteillePerso/:id",
     component: AjouterBouteillePerso,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: "/recherche-bouteille-cellier",
+    component: RechercheBouteilleCellier,
     meta: { requiresAuth: true },
   },
   // redirige les URL non reconnu (dans notre code) pour /connexion-usager

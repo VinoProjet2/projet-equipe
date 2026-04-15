@@ -6,9 +6,11 @@
   </div>
 
   <div class="entete-cellier">
-    <h2></h2>
     <button class="btn btn-entete-cellier" @click="creerCellier">
       <Plus class="icon" /> <span>Nouveau</span>
+    </button>
+    <button class="btn btn-entete-cellier" @click="rechercheBouteilleCellier">
+      <Search class="icon" /> <span>Recherche </span>
     </button>
   </div>
   <Cellier
@@ -32,13 +34,14 @@
 import axios from "axios";
 import api, { fetchCsrfToken } from "../../api";
 import Cellier from "../../components/Cellier.vue";
-import { Plus } from "lucide-vue-next";
+import { Plus, Search } from "lucide-vue-next";
 import Navbar from "../../components/Navbar.vue";
 import ModalConfirmation from "../../components/ModalConfirmation.vue";
 export default {
   components: {
     Cellier,
     Plus,
+    Search,
     Navbar,
     ModalConfirmation,
   },
@@ -66,6 +69,9 @@ export default {
     },
     creerCellier() {
       this.$router.push("/creer-cellier");
+    },
+    rechercheBouteilleCellier() {
+      this.$router.push("/recherche-bouteille-cellier");
     },
     ouvrirModale(id) {
       this.idASupprimer = id;
