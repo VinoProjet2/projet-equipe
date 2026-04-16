@@ -7,6 +7,11 @@
       </div>
 
       <label>
+        <input type="radio" value="0" v-model="localTri" />
+        {{ tous }}
+      </label>
+
+      <label>
         <input type="radio" value="1" v-model="localTri" />
         {{ nomAZ }}
       </label>
@@ -47,6 +52,10 @@ export default {
   props: {
     show: Boolean,
     tri: String,
+    tous: {
+      type: String,
+      default: "Tout désélectionner",
+    },
     nomAZ: {
       type: String,
       default: "Nom A-Z",
