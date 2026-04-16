@@ -108,19 +108,53 @@
         <h3>{{ bouteille.vin.nom }}</h3>
         <p>Cellier : {{ bouteille.cellier.nom }}</p>
         <p>Quantité : {{ bouteille.quantite }}</p>
-        <p>Prix : {{ bouteille.vin.prix }} $</p>
+        <button
+          @click="modifierQuantiteVin(bouteille.quantite - 1, bouteille.id)"
+          :disabled="bouteille.quantite <= 1"
+          class="btn-qte"
+        >
+          <CircleMinus />
+        </button>
+        <button @click="modifierQuantiteVin(bouteille.quantite + 1, bouteille.id)" class="btn-qte">
+          <CirclePlus />
+        </button>
       </div>
+
+      <div class="bouton-cellier">
+      <button class="btn btn-cellier" @click="ouvrirModale(bouteille.id)">
+        <Trash class="icons" />
+      </button>
+
+      <button class="btn btn-cellier" @click="voirDetail(bouteille.id)">
+        <Eye class="icons" />
+      </button>
+    </div>
+
     </div>
   </div>
+
+  <ModalConfirmation
+    :show="afficherModale"
+    message="Voulez-vous supprimer ce vin de ce cellier ?"
+    confirmText="Supprimer"
+    cancelText="Annuler"
+    @confirm="confirmerSuppression"
+    @cancel="afficherModale = false"
+  />
+  <div class="espacement"></div>
+
 </template>
 
 <script>
 import Navbar from "../../components/Navbar.vue";
-import { Search, ListFilter, ArrowDownNarrowWide } from "lucide-vue-next";
+import { Search, ListFilter, ArrowDownNarrowWide, Trash, Eye, CirclePlus, CircleMinus, } from "lucide-vue-next";
 import FilterSection from "../../components/FilterSelection.vue";
 import ColorFilter from "../../components/ColorFilter.vue";
 import axios from "axios";
+import api, { fetchCsrfToken } from "../../api";
+import ModalConfirmation from "../../components/ModalConfirmation.vue";
 import ModalTri from "../../components/ModalTri.vue";
+
 
 export default {
   components: {
@@ -131,6 +165,11 @@ export default {
     FilterSection,
     ColorFilter,
     ModalTri,
+    Trash,
+    Eye,
+    CirclePlus,
+    CircleMinus,
+    ModalConfirmation,
   },
 
   data() {
@@ -175,6 +214,8 @@ export default {
         millesimes: [],
         couleur: [],
       },
+      afficherModale: false,
+      idASupprimer: null,
     };
   },
 
@@ -251,6 +292,57 @@ export default {
         //Gestion des erreurs
         console.error("Erreur chargement bouteilles :", error);
       }
+    },
+
+    // Envoie de requete pour modifier le nombre des bouteilles
+    async modifierQuantiteVin(nouvelleQuantite, id) {
+      if (nouvelleQuantite < 1) return;
+
+      try {
+        await fetchCsrfToken();
+        await api.put(`/modifier-quantite/${id}`, {
+          quantite: nouvelleQuantite,
+        });
+
+        // Doit frait un "refresh" pour voir la nouvel quantite de chaque bouteille
+        this.fetchBouteilles();
+
+      } catch (erreur) {
+        console.error(erreur);
+      }
+    },
+
+     //Ouvrire la modale de suppression de bouteille du cellier
+     ouvrirModale(id) {
+      this.idASupprimer = id;
+      this.afficherModale = true;
+    },
+
+    // Une fois qui l'utilisateur confirme la suppression d'un bouteille du cellier
+    async confirmerSuppression() {
+      try {
+        // supprimer grace a cette route dans le backend, qui supprime dans la DB
+        await api.delete(`/cellier-vins/${this.idASupprimer}`);
+
+        // Supprimer localement
+        this.bouteilles = this.bouteilles.filter((item) => item.id !== this.idASupprimer);
+
+        // enlever l'affichage du Modale de suppression
+        this.afficherModale = false;
+        this.idASupprimer = null;
+
+        // Doit frait un "refresh" pour voir la bouteille supprimer
+        this.fetchBouteilles();
+
+      } catch (err) {
+        this.erreur =
+          "Erreur lors de la suppression d'une bouteille dans ce cellier";
+      }
+    },
+
+    // Push vers la page du detail de la bouteille
+    voirDetail(id) {
+      this.$router.push(`/cellier-vin/${id}`);
     },
   },
 
