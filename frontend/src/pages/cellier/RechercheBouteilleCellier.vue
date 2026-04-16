@@ -101,7 +101,16 @@
         <h3>{{ bouteille.vin.nom }}</h3>
         <p>Cellier : {{ bouteille.cellier.nom }}</p>
         <p>Quantité : {{ bouteille.quantite }}</p>
-        <p>Prix : {{ bouteille.vin.prix }} $</p>
+        <button
+          @click="modifierQuantiteVin(bouteille.quantite - 1, bouteille.id)"
+          :disabled="bouteille.quantite <= 1"
+          class="btn-qte"
+        >
+          <CircleMinus />
+        </button>
+        <button @click="modifierQuantiteVin(bouteille.quantite + 1, bouteille.id)" class="btn-qte">
+          <CirclePlus />
+        </button>
       </div>
     </div>
   </div>
@@ -109,10 +118,11 @@
 
 <script>
 import Navbar from "../../components/Navbar.vue";
-import { Search, ListFilter, ArrowDownUp } from "lucide-vue-next";
+import { Search, ListFilter, ArrowDownUp, Trash, Eye, CirclePlus, CircleMinus, } from "lucide-vue-next";
 import FilterSection from "../../components/FilterSelection.vue";
 import ColorFilter from "../../components/ColorFilter.vue";
 import axios from "axios";
+import api, { fetchCsrfToken } from "../../api";
 
 export default {
   components: {
@@ -122,6 +132,10 @@ export default {
     ArrowDownUp,
     FilterSection,
     ColorFilter,
+    Trash,
+    Eye,
+    CirclePlus,
+    CircleMinus,
   },
 
   data() {
@@ -225,6 +239,24 @@ export default {
       } catch (error) {
         //Gestion des erreurs
         console.error("Erreur chargement bouteilles :", error);
+      }
+    },
+
+    // Envoie de requete pour modifier le nombre des bouteilles
+    async modifierQuantiteVin(nouvelleQuantite, id) {
+      if (nouvelleQuantite < 1) return;
+
+      try {
+        await fetchCsrfToken();
+        await api.put(`/modifier-quantite/${id}`, {
+          quantite: nouvelleQuantite,
+        });
+
+        // Doit frait un "refresh" pour voir la nouvel quantite de chaque bouteille
+        this.fetchBouteilles();
+
+      } catch (erreur) {
+        console.error(erreur);
       }
     },
   },
