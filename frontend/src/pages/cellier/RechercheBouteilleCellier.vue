@@ -118,7 +118,7 @@
         <Trash class="icons" />
       </button>
 
-      <button class="btn btn-cellier" @click="voirDetail">
+      <button class="btn btn-cellier" @click="voirDetail(bouteille.id)">
         <Eye class="icons" />
       </button>
     </div>
@@ -312,6 +312,11 @@ export default {
         this.erreur =
           "Erreur lors de la suppression d'une bouteille dans ce cellier";
       }
+    },
+
+    // Push vers la page du detail de la bouteille
+    voirDetail(id) {
+      this.$router.push(`/cellier-vin/${id}`);
     },
   },
 
