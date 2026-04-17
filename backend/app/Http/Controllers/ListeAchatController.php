@@ -8,11 +8,28 @@ use Illuminate\Http\Request;
 class ListeAchatController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Affiche la liste d'achats.
      */
     public function index()
-    {
-        //
+    {        
+        $usager = auth()->user();
+        
+        // Va chercher dans la DB le cellier qui correspond a $id
+        $listeAchat = ListeAchat::with('vin')
+            ->where('usager_id', $usager->id)
+            ->get();
+
+        //Si il trouve pas le correspondant
+        if (!$listeAchat) {
+            return response()->json([
+                'message' => "Le details de cet achat n'est pas trouvé"
+            ], 404);
+        }
+        
+        //retourne la liste d'achats correspondant au usager
+        return response()->json([
+            'liste_achats' => $listeAchat
+        ]);
     }
 
     /**
@@ -32,7 +49,7 @@ class ListeAchatController extends Controller
          $request->validate(
             [
                 'usager_id' => 'required|exists:usagers,id',
-                'vin_id' =>     'required|exists:vins,id',
+                'vin_id' =>     'required|exists:vins,id'
             ],
         );
 
@@ -51,6 +68,7 @@ class ListeAchatController extends Controller
             $ListeAchat = ListeAchat::create([
                 'usager_id' => $request->usager_id,
                 'vin_id' => $request->vin_id,
+                'quantite' => 1,
             ]);
 
             // Retourner une réponse de succès
