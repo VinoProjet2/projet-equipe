@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <div class="bouton-celleir">
+    <div class="bouton-cellier">
       <button
         class="btn btn-cellier"
         @click="$emit('ouvrir-modale', cellier.id)"
