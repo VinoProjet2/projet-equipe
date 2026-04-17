@@ -96,7 +96,7 @@
     @close="showTri = false"
   />
 
-  <div class="liste-bouteilles">
+  <div>
 
     <div
       v-for="bouteille in bouteilles"
@@ -111,25 +111,28 @@
         {{ bouteille.messageErreur }}
       </div>
 
-      <div class="carte-bouteille">
+      <div class="nom-cellier">
 
-        <img :src="bouteille.vin.image_url" alt="vin" class="image-vin" />
 
-        <div class="info">
-          <h3>{{ bouteille.vin.nom }}</h3>
-          <p>Cellier : {{ bouteille.cellier.nom }}</p>
-          <p>Prix : {{ bouteille.vin.prix }}$</p>
-          <p>Quantité : {{ bouteille.quantite }}</p>
-          <button
-            @click="modifierQuantiteVin(bouteille.quantite - 1, bouteille.id)"
-            :disabled="bouteille.quantite <= 1"
-            class="btn-qte"
-          >
-            <CircleMinus />
-          </button>
-          <button @click="modifierQuantiteVin(bouteille.quantite + 1, bouteille.id)" class="btn-qte">
-            <CirclePlus />
-          </button>
+
+        <div class="vin-cellier-carte">
+          <img :src="bouteille.vin.image_url" alt="vin" class="image-vin" />
+          <div>
+            <h2 class="nom">{{ bouteille.vin.nom }}</h2>
+            <p>Cellier : {{ bouteille.cellier.nom }}</p>
+            <p>Prix : {{ bouteille.vin.prix }}$</p>
+            <p class="meta">Quantité : {{ bouteille.quantite }}</p>
+            <button
+              @click="modifierQuantiteVin(bouteille.quantite - 1, bouteille.id)"
+              :disabled="bouteille.quantite <= 1"
+              class="btn-qte"
+            >
+              <CircleMinus />
+            </button>
+            <button @click="modifierQuantiteVin(bouteille.quantite + 1, bouteille.id)" class="btn-qte">
+              <CirclePlus />
+            </button>
+          </div>
         </div>
 
         <div class="bouton-cellier">
