@@ -331,4 +331,88 @@ class VinController extends Controller
 
         return response()->json(['message' => 'La bouteille personnalisée est supprimée']);
     }
+
+    // Récupérer les détails d'un vin à partir de son SKU
+    public function chercherVinPersonnalise($sku)
+    {
+        $vin = Vin::where('sku', $sku)->first();
+
+        if ($vin) {
+            return response()->json($vin);
+        } else {
+            return response()->json(['message' => 'Bouteille non trouvée'], 404);
+        }
+    }
+
+    // Modifier une bouteille personnalisée dans la table des vins
+    public function modifierBouteillePersonnalisee(Request $request, $sku)
+    {
+        // Valider les données de la requête
+        $request->validate([
+            'nom' => 'required|string|max:100',
+            'prix' => 'required|numeric|min:1',
+            'pays' => 'nullable|string',
+            'region' => 'nullable|string|not_regex:/[0-9]/',
+            'cepage' => 'nullable|string|not_regex:/[0-9]/',
+            'degre_alcool' => 'nullable|numeric',
+            'taux_sucre' => 'nullable|numeric',
+            'format' => 'nullable|integer|min:50|max:10000',
+            'annee' => 'nullable|digits:4',
+            'couleur' => 'nullable|string',
+        ], [
+            'nom.required' => 'Le nom de la bouteille est obligatoire.',
+            'nom.max' => 'Le nom de la bouteille ne peut pas dépasser 100 caractères.',
+
+            'prix.required' => 'Le prix de la bouteille est obligatoire.',
+            'prix.numeric' => 'Le prix doit être un nombre.',
+            'prix.min' => 'Le prix doit être supérieur ou égal à 1.',
+
+            'pays.string' => 'Le pays doit être une chaîne de caractères.',
+
+            'region.string' => 'La région doit être une chaîne de caractères.',
+            'region.not_regex' => 'La région ne doit pas contenir de chiffres.',
+
+            'cepage.string' => 'Le cépage doit être une chaîne de caractères.',
+            'cepage.not_regex' => 'Le cépage ne doit pas contenir de chiffres.',
+
+            'degre_alcool.numeric' => 'Le degré d alcool doit être un nombre.',
+
+            'taux_sucre.numeric' => 'Le taux de sucre doit être un nombre.',
+
+            'format.integer' => 'Le format doit être un nombre.',
+            'format.min' => 'Le format doit être au moins de 50 ml.',
+            'format.max' => 'Le format ne peut pas dépasser 10000 ml.',
+
+            'annee.digits' => 'L année doit contenir exactement 4 chiffres.',
+
+            'couleur.string' => 'La couleur doit être une chaîne de caractères.',
+
+        ]);
+
+        // Rechercher la bouteille de vin personnalisée par son SKU
+        $vinPersonnalise = Vin::where('sku', $sku)->first();
+
+        // Vérifier si la bouteille existe et si elle est personnalisée (SKU commençant par "PERSO-")
+        if (!$vinPersonnalise) {
+            return response()->json(['message' => 'Bouteille non trouvée'], 404);
+        }
+        // Vérifier si la bouteille est personnalisée
+        if (!str_starts_with($vinPersonnalise->sku, 'PERSO-')) {
+            return response()->json(['message' => 'Bouteille alo de la SAQ ne doit pas être modifiée'], 400);
+        }
+
+        // Mettre à jour les attributs de la bouteille personnalisée avec les nouvelles valeurs
+        $vinPersonnalise->update([
+            'nom' => $request->input('nom'),
+            'prix' => $request->input('prix'),
+            'pays' => $request->input('pays'),
+            'region' => $request->input('region'),
+            'cepage' => $request->input('cepage'),
+            'degre_alcool' => $request->input('degre_alcool'),
+            'taux_sucre' => $request->input('taux_sucre'),
+            'format' => $request->input('format'),
+            'annee' => $request->input('annee'),
+            'couleur' => $request->input('couleur')
+        ]);
+    }
 }

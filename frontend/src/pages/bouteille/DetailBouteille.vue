@@ -14,7 +14,7 @@
       confirmText="Supprimer"
       cancelText="Annuler"
       @confirm="supprimerBouteille"
-      @cancel="afficherModale.value = false"
+      @cancel="afficherModale = false"
     />
   </div>
 </template>
@@ -57,7 +57,11 @@ async function supprimerBouteille() {
     console.error("Erreur lors de la suppression de la bouteille:", erreur);
   }
 }
-async function modifierBouteille() {}
+function modifierBouteille() {
+  router.push(
+    `/bouteille/ModifierBouteillePerso/${store.bouteilleVin.sku},${store.bouteilleVin.cellier_id}`,
+  );
+}
 
 onMounted(() => {
   store.fetchCellier(route.params.id);

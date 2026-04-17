@@ -76,4 +76,10 @@ Route::middleware(['web', 'auth'])->group(function () {
 
     //Routes pour gerer la liste d'achats
     Route::post('/ajouter-bouteille-liste', [ListeAchatController::class, 'store']);
+
+    // Route pour récupérer les détails d'un vin à partir de son SKU
+    Route::get('/vin/{sku}', [VinController::class, 'chercherVinPersonnalise']);
+
+    // Route pour modifier une bouteille personnalisée dans la table des vins
+    Route::put('/modifier-bouteille-perso/{sku}', [VinController::class, 'modifierBouteillePersonnalisee']);
 });
