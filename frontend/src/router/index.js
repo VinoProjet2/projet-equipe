@@ -82,11 +82,19 @@ const routes = [
     component: RechercheBouteilleCellier,
     meta: { requiresAuth: true },
   },
+
   {
     path: "/bouteille/ModifierBouteillePerso/:sku,:cellier_id",
     component: ModifierBouteillePerso,
     meta: { requiresAuth: true },
   },
+
+  {
+    path: "/liste-achats",
+    component: ListeAchats,
+    meta: { requiresAuth: true },
+  },
+
   // redirige les URL non reconnu (dans notre code) pour /connexion-usager
   {
     path: "/:pathMatch(.*)*",
