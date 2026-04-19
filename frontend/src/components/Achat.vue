@@ -10,15 +10,14 @@
     </div>
 
     <div class="bouton-cellier">
-      <button class="btn btn-cellier" @click="$emit('ouvrir-modale', id)">
-        <Trash class="icons" />
+      <button class="btn btn-cellier" @click="ajouterAuCellier">
+        <Plus class="icons" />
       </button>
-
       <button class="btn btn-cellier" @click="voirDetail">
         <Eye class="icons" />
       </button>
-      <button class="btn btn-cellier" @click="ajouterAuCellier">
-        <Plus class="icons" />
+      <button class="btn btn-cellier" @click="$emit('ouvrir-modale', id)">
+        <Trash class="icons" />
       </button>
     </div>
   </div>

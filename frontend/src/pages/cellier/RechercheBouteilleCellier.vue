@@ -97,14 +97,9 @@
   />
 
   <div>
-
-    <div
-      v-for="bouteille in bouteilles"
-      :key="bouteille.id"
-    >
-
+    <div v-for="bouteille in bouteilles" :key="bouteille.id">
       <div v-if="bouteille.messageAjout" class="bloc-modale-succes">
-        {{bouteille.messageAjout }}
+        {{ bouteille.messageAjout }}
       </div>
 
       <div v-if="bouteille.messageErreur" class="erreur">
@@ -112,9 +107,6 @@
       </div>
 
       <div class="nom-cellier">
-
-
-
         <div class="vin-cellier-carte">
           <img :src="bouteille.vin.image_url" alt="vin" class="image-vin" />
           <div>
@@ -129,29 +121,34 @@
             >
               <CircleMinus />
             </button>
-            <button @click="modifierQuantiteVin(bouteille.quantite + 1, bouteille.id)" class="btn-qte">
+            <button
+              @click="modifierQuantiteVin(bouteille.quantite + 1, bouteille.id)"
+              class="btn-qte"
+            >
               <CirclePlus />
             </button>
           </div>
         </div>
 
         <div class="bouton-cellier">
-        <button class="btn btn-cellier" @click="ouvrirModale(bouteille.id)">
-          <Trash class="icons" />
-        </button>
+          <button class="btn btn-cellier" @click="voirDetail(bouteille.id)">
+            <Eye class="icons" />
+          </button>
 
-        <button class="btn btn-cellier" @click="voirDetail(bouteille.id)">
-          <Eye class="icons" />
-        </button>
+          <button
+            class="btn btn-cellier"
+            @click="ajouterListeAchats(bouteille.id)"
+          >
+            <ShoppingBasket class="icons" />
+          </button>
 
-        <button class="btn btn-cellier" @click="ajouterListeAchats(bouteille.id)">
-          <ShoppingBasket class="icons" />
-        </button>
-
+          <button class="btn btn-cellier" @click="ouvrirModale(bouteille.id)">
+            <Trash class="icons" />
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <ModalConfirmation
     :show="afficherModale"
@@ -162,12 +159,20 @@
     @cancel="afficherModale = false"
   />
   <div class="espacement"></div>
-
 </template>
 
 <script>
 import Navbar from "../../components/Navbar.vue";
-import { Search, ListFilter, ArrowDownNarrowWide, Trash, Eye, CirclePlus, CircleMinus, ShoppingBasket, } from "lucide-vue-next";
+import {
+  Search,
+  ListFilter,
+  ArrowDownNarrowWide,
+  Trash,
+  Eye,
+  CirclePlus,
+  CircleMinus,
+  ShoppingBasket,
+} from "lucide-vue-next";
 import FilterSection from "../../components/FilterSelection.vue";
 import ColorFilter from "../../components/ColorFilter.vue";
 import axios from "axios";
@@ -175,7 +180,6 @@ import api, { fetchCsrfToken } from "../../api";
 import ModalConfirmation from "../../components/ModalConfirmation.vue";
 import ModalTri from "../../components/ModalTri.vue";
 import { useAuthStore } from "../../stores/auth";
-
 
 export default {
   components: {
@@ -330,14 +334,13 @@ export default {
 
         // Doit frait un "refresh" pour voir la nouvel quantite de chaque bouteille
         this.fetchBouteilles();
-
       } catch (erreur) {
         console.error(erreur);
       }
     },
 
-     //Ouvrire la modale de suppression de bouteille du cellier
-     ouvrirModale(id) {
+    //Ouvrire la modale de suppression de bouteille du cellier
+    ouvrirModale(id) {
       this.idASupprimer = id;
       this.afficherModale = true;
     },
@@ -349,7 +352,9 @@ export default {
         await api.delete(`/cellier-vins/${this.idASupprimer}`);
 
         // Supprimer localement
-        this.bouteilles = this.bouteilles.filter((item) => item.id !== this.idASupprimer);
+        this.bouteilles = this.bouteilles.filter(
+          (item) => item.id !== this.idASupprimer,
+        );
 
         // enlever l'affichage du Modale de suppression
         this.afficherModale = false;
@@ -357,7 +362,6 @@ export default {
 
         // Doit frait un "refresh" pour voir la bouteille supprimer
         this.fetchBouteilles();
-
       } catch (err) {
         this.erreur =
           "Erreur lors de la suppression d'une bouteille dans ce cellier";
@@ -371,8 +375,7 @@ export default {
 
     async ajouterListeAchats(idVin) {
       try {
-
-        const bouteille = this.bouteilles.find(b => b.id === idVin);
+        const bouteille = this.bouteilles.find((b) => b.id === idVin);
         if (bouteille) {
           bouteille.messageAjout = null;
         }
@@ -382,7 +385,7 @@ export default {
         await authStore.fetchUsager();
         const usagerId = authStore.usager.id;
 
-         // Récupérer l'id du vin
+        // Récupérer l'id du vin
         const vinId = idVin;
 
         //appel api pour ajouter a la BD
@@ -394,23 +397,24 @@ export default {
         // afficher un message de succès
         if (bouteille) {
           bouteille.messageAjout =
-          "Votre bouteille a été ajoutée a la liste d'achat avec succès !";
-        setTimeout(() => {
-          bouteille.messageAjout = null;
-        }, 2000);
-      }
-      // afficher message d'erreur
+            "Votre bouteille a été ajoutée a la liste d'achat avec succès !";
+          setTimeout(() => {
+            bouteille.messageAjout = null;
+          }, 2000);
+        }
+        // afficher message d'erreur
       } catch (erreur) {
-        const bouteille = this.bouteilles.find(b => b.id === idVin);
+        const bouteille = this.bouteilles.find((b) => b.id === idVin);
 
         if (bouteille) {
-          bouteille.messageErreur = "La bouteille n'a pas pu etre ajouter a la liste d'achat, car elle en fait deja parti"
+          bouteille.messageErreur =
+            "Cette bouteille est déjà dans votre liste d’achats";
           setTimeout(() => {
             bouteille.messageErreur = null;
           }, 3000);
+        }
       }
-    }
-    }
+    },
   },
 
   mounted() {

@@ -12,19 +12,19 @@
     </div>
 
     <div class="bouton-cellier">
-      <button
-        class="btn btn-cellier"
-        @click="$emit('ouvrir-modale', cellier.id)"
-      >
-        <Trash class="icons" />
+      <button class="btn btn-cellier" @click="voirDetailVinCellier">
+        <Eye class="icons" />
       </button>
 
       <button class="btn btn-cellier" @click="modifierCellier">
         <PencilLine class="icons" />
       </button>
 
-      <button class="btn btn-cellier" @click="voirDetailVinCellier">
-        <Eye class="icons" />
+      <button
+        class="btn btn-cellier"
+        @click="$emit('ouvrir-modale', cellier.id)"
+      >
+        <Trash class="icons" />
       </button>
     </div>
   </div>

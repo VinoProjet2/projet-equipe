@@ -27,10 +27,6 @@
     </div>
 
     <div class="bouton-cellier">
-      <button class="btn btn-cellier" @click="$emit('ouvrir-modale', id)">
-        <Trash class="icons" />
-      </button>
-
       <button class="btn btn-cellier" @click="voirDetail">
         <Eye class="icons" />
       </button>
@@ -39,6 +35,9 @@
         <ShoppingBasket class="icons" />
       </button>
 
+      <button class="btn btn-cellier" @click="$emit('ouvrir-modale', id)">
+        <Trash class="icons" />
+      </button>
     </div>
   </div>
 </template>
@@ -101,7 +100,6 @@ export default {
     },
     async ajouterListeAchats() {
       try {
-
         this.message = "";
         this.messageSucces = "";
 
@@ -110,7 +108,7 @@ export default {
         await authStore.fetchUsager();
         const usagerId = authStore.usager.id;
 
-         // Récupérer l'id du vin
+        // Récupérer l'id du vin
         const vinId = this.vin.id;
 
         //appel api pour ajouter a la BD
@@ -125,16 +123,14 @@ export default {
         setTimeout(() => {
           this.messageSucces = "";
         }, 2000);
-
-      }
-      // afficher message d'erreur
-      catch (erreur) {
-        this.message = "La bouteille n'a pas pu etre ajouter a la liste d'achat, car elle en fait deja parti"
+      } catch (erreur) {
+        // afficher message d'erreur
+        this.message = "Cette bouteille est déjà dans votre liste d’achats";
         setTimeout(() => {
           this.message = "";
         }, 4000);
       }
-    }
+    },
   },
 };
 </script>
