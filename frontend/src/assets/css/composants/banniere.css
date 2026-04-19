@@ -21,3 +21,21 @@
   margin-top: 0;
   padding: var(--espace-grand);
 }
+
+@media screen and (min-width: 768px) {
+  .banniere {
+    z-index: 0;
+  }
+  .mobile-navbar.banniere {
+    top: 45px;
+  }
+  .banniere-titre {
+    padding: 5px;
+  }
+  .home {
+    margin-top: 45px;
+  }
+  [id="app"] {
+    margin-top: 45px;
+  }
+}

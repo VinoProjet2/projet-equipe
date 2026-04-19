@@ -5,9 +5,7 @@ html {
 
 body {
   height: 100vh;
-  font-family:
-    Open Sans,
-    sans-serif;
+  font-family: Open Sans, sans-serif;
   background: #f1f1f1;
 }
 
@@ -52,10 +50,7 @@ body {
   font-size: 5rem;
   font-weight: 700;
   font-family: serif;
-  text-shadow:
-    2px 2px 4px rgba(0, 0, 0, 0.8),
-    -1px -1px 0 #fff,
-    1px 1px 0 #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), -1px -1px 0 #fff, 1px 1px 0 #fff;
   padding: 10px 40px;
   background: rgba(255, 255, 255, 0.15);
 
@@ -154,5 +149,13 @@ body {
   .erreur {
     margin: 5px;
     font-size: 16px;
+  }
+}
+
+@media screen and (min-width: 910px) {
+  .container.container-plain {
+    max-width: 50%;
+    display: block;
+    margin-top: 60px;
   }
 }

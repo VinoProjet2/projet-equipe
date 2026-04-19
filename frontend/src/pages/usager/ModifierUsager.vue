@@ -6,7 +6,7 @@
     {{ messageSucces }}
   </div>
   <div v-else><Navbar /></div>
-  <div class="container">
+  <div class="container container-plain">
     <form @submit.prevent="updateUsager" class="bloc-form">
       <div>
         <label>Nom :</label>
