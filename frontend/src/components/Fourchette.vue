@@ -7,115 +7,83 @@
 
     <div v-show="open" class="price-range">
       <div class="slider-container">
-        <label>Minimum</label>
-        <input
-          type="range"
+        <Slider
+          v-model="range"
           :min="minLimit"
           :max="maxLimit"
-          v-model.number="localMin"
-          @input="onMinChange"
+          :tooltips="true"
+          :margin="1"
         />
+
         <div class="values">
-          <span>{{ localMin }}</span>
+          <span>{{ range[0] }}</span>
+          <span>{{ range[1] }}</span>
         </div>
-        <label>Maximum</label>
-        <input
-          type="range"
-          :min="minLimit"
-          :max="maxLimit"
-          v-model.number="localMax"
-          @input="onMaxChange"
-        />
-        <div class="values">
-          <span>{{ localMax }}</span>
-        </div>
+        <button @click="apply" class="app-filtre">Appliquer le filtre</button>
       </div>
     </div>
   </li>
 </template>
 
 <script>
+import Slider from "@vueform/slider";
+import "@vueform/slider/themes/default.css";
+
 export default {
+  components: { Slider },
+
   props: {
     modelValue: Object,
-    minLimit: {
-      type: Number,
-      default: 0,
-    },
-    maxLimit: {
-      type: Number,
-      default: 100,
-    },
+    minLimit: Number,
+    maxLimit: Number,
     label: {
       type: String,
       default: "Prix",
     },
   },
-  emits: ["update:modelValue", "change"],
+
+  emits: ["update:modelValue"],
 
   data() {
     return {
       open: false,
-      localMin: this.minLimit,
-      localMax: this.maxLimit,
+      range: null,
     };
   },
 
   watch: {
-    minLimit: {
-      immediate: true,
-      handler(val) {
-        this.localMin = val;
-      },
-    },
-    maxLimit: {
-      immediate: true,
-      handler(val) {
-        this.localMax = val;
-      },
-    },
     modelValue: {
-      handler(val) {
-        if (!val) return;
-
-        this.localMin = val.min ?? this.minLimit;
-        this.localMax = val.max ?? this.maxLimit;
-      },
-      deep: true,
       immediate: true,
+      handler(val) {
+        if (val && val.min != null && val.max != null) {
+          this.range = [Number(val.min), Number(val.max)];
+        } else if (!this.range) {
+          this.range = [Number(this.minLimit), Number(this.maxLimit)];
+        }
+      },
     },
 
-    open(val) {
-      if (val) {
-        this.localMin = this.modelValue?.min ?? this.minLimit;
-        this.localMax = this.modelValue?.max ?? this.maxLimit;
-      }
+    minLimit() {
+      this.initRange();
+    },
+
+    maxLimit() {
+      this.initRange();
     },
   },
 
   methods: {
-    onMinChange() {
-      if (this.localMin > this.localMax) {
-        this.localMin = this.localMax;
+    initRange() {
+      if (!this.modelValue?.min && !this.modelValue?.max) {
+        this.range = [Number(this.minLimit), Number(this.maxLimit)];
       }
-      this.update();
     },
 
-    onMaxChange() {
-      if (this.localMax < this.localMin) {
-        this.localMax = this.localMin;
-      }
-      this.update();
-    },
-
-    update() {
-      const value = {
-        min: this.localMin,
-        max: this.localMax,
-      };
-
-      this.$emit("update:modelValue", value);
-      this.$emit("change", value);
+    apply() {
+      this.$emit("update:modelValue", {
+        min: this.range[0],
+        max: this.range[1],
+      });
     },
   },
 };

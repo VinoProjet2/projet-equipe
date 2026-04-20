@@ -37,7 +37,9 @@
     <div class="filter-header">
       <h2>Filtres</h2>
     </div>
-
+    <button class="reset-filters" @click="reinitialiserFiltres">
+      Réinitialiser les filtres
+    </button>
     <ul class="filter-list">
       <ColorFilter v-model="selected.couleur" />
 
@@ -66,36 +68,31 @@
         v-if="filters.prix"
         :key="selected.reinitialiser"
         v-model="selected.prix"
-        :minLimit="filters.prix.min"
-        :maxLimit="filters.prix.max"
+        :minLimit="safeNumber(filters.prix.min)"
+        :maxLimit="safeNumber(filters.prix.max)"
       />
 
       <FourchetteFiltre
         :key="selected.reinitialiser"
         v-model="selected.format"
-        :minLimit="filters.formats.min"
-        :maxLimit="filters.formats.max"
+        :minLimit="safeNumber(filters.format.min)"
+        :maxLimit="safeNumber(filters.format.max)"
         label="Format (ml)"
       />
 
       <FourchetteFiltre
         :key="selected.reinitialiser"
         v-model="selected.degres"
-        :minLimit="formatDonnees(filters.degres.min)"
-        :maxLimit="formatDonnees(filters.degres.max)"
+        :minLimit="safeNumber(filters.degres.min)"
+        :maxLimit="safeNumber(filters.degres.max)"
         label="Degré (%)"
       />
-
       <AnneeFiltreSelect
         :key="selected.reinitialiser"
         :items="filters.millesimes"
         v-model="selected.millesimes"
         label="Millésimes"
       />
-
-      <button class="reset-filters" @click="reinitialiserFiltres">
-        Réinitialiser les filtres
-      </button>
     </ul>
   </aside>
 
@@ -185,16 +182,16 @@ import {
   Eye,
   CirclePlus,
   CircleMinus,
+  ShoppingBasket,
 } from "lucide-vue-next";
 
 import FourchetteFiltre from "../../components/Fourchette.vue";
 import FilterSelect from "../../components/FiltreSelect.vue";
 import AnneeFiltreSelect from "../../components/AnneeFiltreSelect.vue";
-import { ShoppingBasket } from "lucide-vue-next";
-import FilterSection from "../../components/FilterSelection.vue";
 import ColorFilter from "../../components/ColorFilter.vue";
 import ModalTri from "../../components/ModalTri.vue";
 import ModalConfirmation from "../../components/ModalConfirmation.vue";
+import { useWineStore } from "../../stores/wineStore";
 
 import axios from "axios";
 import api, { fetchCsrfToken } from "../../api";
@@ -209,13 +206,13 @@ export default {
     Eye,
     CirclePlus,
     CircleMinus,
+    ShoppingBasket,
     FourchetteFiltre,
     FilterSelect,
     AnneeFiltreSelect,
     ColorFilter,
     ModalTri,
     ModalConfirmation,
-    ShoppingBasket,
   },
 
   data() {
@@ -233,7 +230,7 @@ export default {
         prix: { min: null, max: null },
         format: { min: null, max: null },
         degres: { min: null, max: null },
-        millesimes: { min: null, max: null },
+        millesimes: [],
         couleur: [],
         reinitialiser: 0,
       },
@@ -243,15 +240,14 @@ export default {
         regions: [],
         cepages: [],
         prix: { min: 0, max: 0 },
-        formats: { min: 0, max: 0 },
+        format: { min: 0, max: 0 },
         degres: { min: 0, max: 0 },
         millesimes: [],
+        couleur: [],
       },
 
       afficherModale: false,
       idASupprimer: null,
-      messageSucces: "",
-      message: "",
     };
   },
 
@@ -259,6 +255,7 @@ export default {
     search() {
       this.fetchBouteilles();
     },
+
     selected: {
       handler() {
         this.fetchBouteilles();
@@ -268,10 +265,22 @@ export default {
   },
 
   methods: {
-    formatDonnees(val) {
-      return val ? parseFloat(val).toFixed(2) : 0;
-    },
+    getMinMax(array) {
+      if (!Array.isArray(array) || array.length === 0) {
+        return { min: 0, max: 0 };
+      }
 
+      const nums = array.map((v) => Number(v)).filter((v) => !isNaN(v));
+
+      return {
+        min: Math.min(...nums),
+        max: Math.max(...nums),
+      };
+    },
+    safeNumber(val) {
+      const n = Number(val);
+      return isNaN(n) ? 0 : n;
+    },
     toggleFilter() {
       this.showFilter = !this.showFilter;
     },
@@ -284,18 +293,67 @@ export default {
 
     async fetchBouteilles() {
       try {
+        const filters = {};
+
+        if (this.selected.countries.length)
+          filters.countries = this.selected.countries;
+
+        if (this.selected.regions.length)
+          filters.regions = this.selected.regions;
+
+        if (this.selected.cepages.length)
+          filters.cepages = this.selected.cepages;
+
+        if (
+          this.selected.prix &&
+          (this.selected.prix.min != null || this.selected.prix.max != null)
+        ) {
+          filters.prix = this.selected.prix;
+        }
+
+        if (
+          this.selected.format &&
+          (this.selected.format.min != null || this.selected.format.max != null)
+        ) {
+          filters.format = this.selected.format;
+        }
+
+        if (
+          this.selected.degres &&
+          (this.selected.degres.min != null || this.selected.degres.max != null)
+        ) {
+          filters.degres = this.selected.degres;
+        }
+
+        if (this.selected.millesimes.length)
+          filters.millesimes = this.selected.millesimes;
+
+        if (this.selected.couleur.length)
+          filters.couleur = this.selected.couleur;
+
         const res = await axios.get("/api/bouteilles", {
           params: {
             recherche: this.search,
-            filters: this.selected,
+            filters,
             tri: this.tri,
           },
         });
 
-        this.bouteilles = res.data.data || res.data;
+        this.bouteilles = res.data.data || [];
 
         if (res.data.filters) {
-          this.filters = res.data.filters;
+          this.filters = {
+            countries: res.data.filters.countries || [],
+            regions: res.data.filters.regions || [],
+            cepages: res.data.filters.cepages || [],
+            couleur: res.data.filters.couleur || [],
+
+            prix: this.getMinMax(res.data.filters.prix),
+            format: this.getMinMax(res.data.filters.formats),
+            degres: this.getMinMax(res.data.filters.degres),
+
+            millesimes: res.data.filters.millesimes || [],
+          };
         }
       } catch (e) {
         console.error(e);
@@ -324,7 +382,6 @@ export default {
       );
 
       this.afficherModale = false;
-      this.fetchBouteilles();
     },
 
     voirDetail(id) {
@@ -339,7 +396,7 @@ export default {
         prix: { min: null, max: null },
         format: { min: null, max: null },
         degres: { min: null, max: null },
-        millesimes: { min: null, max: null },
+        millesimes: [],
         couleur: [],
         reinitialiser: this.selected.reinitialiser + 1,
       };

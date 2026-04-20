@@ -22,7 +22,9 @@
         <div class="filter-header">
           <h2>Filtres</h2>
         </div>
-
+        <button class="reset-filters" @click="reinitialiserFiltres">
+          Réinitialiser les filtres
+        </button>
         <ul class="filter-list">
           <ColorFilter v-model="selected.couleur" />
           <FilterSelect
@@ -73,9 +75,6 @@
             v-model="selected.millesimes"
             label="Millésimes"
           />
-          <button class="reset-filters" @click="reinitialiserFiltres">
-            Réinitialiser les filtres
-          </button>
         </ul>
       </aside>
     </div>
@@ -257,9 +256,8 @@ export default {
 
   methods: {
     formatDonnees(value) {
-      if (!value) return "-";
       const num = parseFloat(value);
-      return isNaN(num) ? value : num.toFixed(2);
+      return isNaN(num) ? 0 : num;
     },
 
     toggleFilter() {
