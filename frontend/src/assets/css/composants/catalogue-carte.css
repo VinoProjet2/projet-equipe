@@ -257,3 +257,15 @@
   margin-bottom: 15px;
   justify-content: space-between;
 }
+
+.reset-filters {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: var(--blanc-clair);
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}

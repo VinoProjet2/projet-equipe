@@ -38,54 +38,61 @@
     <ul class="filter-list">
       <ColorFilter v-model="selected.couleur" />
 
-      <FilterSection
-        title="Pays"
+      <FilterSelect
+        :key="selected.reinitialiser"
+        label="Pays"
         :items="filters.countries"
         v-model="selected.countries"
-        clearable
       />
 
-      <FilterSection
-        title="Régions"
+      <FilterSelect
+        :key="selected.reinitialiser"
+        label="Régions"
         :items="filters.regions"
         v-model="selected.regions"
-        clearable
       />
 
-      <FilterSection
-        title="Cépages"
+      <FilterSelect
+        :key="selected.reinitialiser"
+        label="Cépages"
         :items="filters.cepages"
         v-model="selected.cepages"
-        clearable
       />
 
-      <FilterSection
-        title="Prix ($)"
-        :items="filters.prix"
+      <FourchetteFiltre
+        :key="selected.reinitialiser"
+        v-if="filters.prix"
         v-model="selected.prix"
-        clearable
+        :minLimit="filters.prix.min"
+        :maxLimit="filters.prix.max"
       />
 
-      <FilterSection
-        title="Format (ml)"
-        :items="filters.formats"
-        v-model="selected.formats"
-        clearable
+      <FourchetteFiltre
+        :key="selected.reinitialiser"
+        v-model="selected.format"
+        :minLimit="filters.formats.min"
+        :maxLimit="filters.formats.max"
+        label="Format (ml)"
       />
 
-      <FilterSection
-        title="Degré (%)"
-        :items="filters.degres"
+      <FourchetteFiltre
+        :key="selected.reinitialiser"
         v-model="selected.degres"
-        clearable
+        :minLimit="formatDonnees(filters.degres.min)"
+        :maxLimit="formatDonnees(filters.degres.max)"
+        label="Degré (%)"
       />
 
-      <FilterSection
-        title="Millésime"
+      <AnneeFiltreSelect
+        :key="selected.reinitialiser"
         :items="filters.millesimes"
         v-model="selected.millesimes"
-        clearable
+        label="Millésimes"
       />
+
+      <button class="reset-filters" @click="reinitialiserFiltres">
+        Réinitialiser les filtres
+      </button>
     </ul>
   </aside>
 
@@ -102,35 +109,39 @@
       :key="bouteille.id"
       class="carte-bouteille"
     >
-      <img :src="bouteille.vin.image_url" alt="vin" class="image-vin" />
+      <img :src="bouteille.vin.image_url" class="image-vin" />
 
       <div class="info">
         <h3>{{ bouteille.vin.nom }}</h3>
         <p>Cellier : {{ bouteille.cellier.nom }}</p>
         <p>Prix : {{ bouteille.vin.prix }}$</p>
         <p>Quantité : {{ bouteille.quantite }}</p>
+
         <button
           @click="modifierQuantiteVin(bouteille.quantite - 1, bouteille.id)"
-          :disabled="bouteille.quantite <= 1"
           class="btn-qte"
+          :disabled="bouteille.quantite <= 1"
         >
           <CircleMinus />
         </button>
-        <button @click="modifierQuantiteVin(bouteille.quantite + 1, bouteille.id)" class="btn-qte">
+
+        <button
+          @click="modifierQuantiteVin(bouteille.quantite + 1, bouteille.id)"
+          class="btn-qte"
+        >
           <CirclePlus />
         </button>
       </div>
 
       <div class="bouton-cellier">
-      <button class="btn btn-cellier" @click="ouvrirModale(bouteille.id)">
-        <Trash class="icons" />
-      </button>
+        <button @click="ouvrirModale(bouteille.id)" class="btn btn-cellier">
+          <Trash />
+        </button>
 
-      <button class="btn btn-cellier" @click="voirDetail(bouteille.id)">
-        <Eye class="icons" />
-      </button>
-    </div>
-
+        <button @click="voirDetail(bouteille.id)" class="btn btn-cellier">
+          <Eye />
+        </button>
+      </div>
     </div>
   </div>
 
@@ -142,20 +153,29 @@
     @confirm="confirmerSuppression"
     @cancel="afficherModale = false"
   />
-  <div class="espacement"></div>
-
 </template>
 
 <script>
 import Navbar from "../../components/Navbar.vue";
-import { Search, ListFilter, ArrowDownNarrowWide, Trash, Eye, CirclePlus, CircleMinus, } from "lucide-vue-next";
-import FilterSection from "../../components/FilterSelection.vue";
+import {
+  Search,
+  ListFilter,
+  ArrowDownNarrowWide,
+  Trash,
+  Eye,
+  CirclePlus,
+  CircleMinus,
+} from "lucide-vue-next";
+
+import FourchetteFiltre from "../../components/Fourchette.vue";
+import FilterSelect from "../../components/FiltreSelect.vue";
+import AnneeFiltreSelect from "../../components/AnneeFiltreSelect.vue";
 import ColorFilter from "../../components/ColorFilter.vue";
+import ModalTri from "../../components/ModalTri.vue";
+import ModalConfirmation from "../../components/ModalConfirmation.vue";
+
 import axios from "axios";
 import api, { fetchCsrfToken } from "../../api";
-import ModalConfirmation from "../../components/ModalConfirmation.vue";
-import ModalTri from "../../components/ModalTri.vue";
-
 
 export default {
   components: {
@@ -163,75 +183,57 @@ export default {
     Search,
     ListFilter,
     ArrowDownNarrowWide,
-    FilterSection,
-    ColorFilter,
-    ModalTri,
     Trash,
     Eye,
     CirclePlus,
     CircleMinus,
+    FourchetteFiltre,
+    FilterSelect,
+    AnneeFiltreSelect,
+    ColorFilter,
+    ModalTri,
     ModalConfirmation,
   },
 
   data() {
     return {
+      search: "",
+      bouteilles: [],
+      showFilter: false,
       showTri: false,
       tri: 0,
-      /**
-       * Texte saisi par l'usager dans la barre de recherche
-       * pour filtrer
-       */
-      search: "",
-      /**
-       * Liste des bouteilles récupérées
-       */
-      bouteilles: [],
 
-      //Affichage du panneau des filtres
-      showFilter: false,
-
-      /**
-       * Contient toutes les options de filtres disponibles
-       * fourni par le backend
-       */
       selected: {
         countries: [],
         regions: [],
         cepages: [],
-        prix: [],
-        formats: [],
-        degres: [],
-        millesimes: [],
+        prix: { min: null, max: null },
+        format: { min: null, max: null },
+        degres: { min: null, max: null },
+        millesimes: { min: null, max: null },
         couleur: [],
+        reinitialiser: 0,
       },
 
       filters: {
         countries: [],
         regions: [],
         cepages: [],
-        prix: [],
-        formats: [],
-        degres: [],
+        prix: { min: 0, max: 0 },
+        formats: { min: 0, max: 0 },
+        degres: { min: 0, max: 0 },
         millesimes: [],
-        couleur: [],
       },
+
       afficherModale: false,
       idASupprimer: null,
     };
   },
 
   watch: {
-    /**
-     * Déclenché a chaque modification du champ de recherche
-     * recharge automatiquement les bouteilles
-     */
     search() {
       this.fetchBouteilles();
     },
-
-    /**
-     * Permet de détecter les filtres sélectionnés
-     */
     selected: {
       handler() {
         this.fetchBouteilles();
@@ -241,117 +243,88 @@ export default {
   },
 
   methods: {
-    /**
-     * Permet d'ouvrir ou fermer le panneau de filtres
-     * en inversant la valeur du booléan showFilter
-     */
+    formatDonnees(val) {
+      return val ? parseFloat(val).toFixed(2) : 0;
+    },
+
     toggleFilter() {
       this.showFilter = !this.showFilter;
     },
 
-    // Permet d'ouvrir ou fermer le panneau de tri
-    toggleTri() {
-      this.showTri = !this.showTri;
-    },
-
-    // Met à jour la valeur du tri, appelle la fonction et cache la fenêtre
-    appliquerTri(triChoisi) {
-      this.tri = triChoisi;
+    appliquerTri(val) {
+      this.tri = val;
       this.fetchBouteilles();
       this.showTri = false;
     },
 
-    /**
-     * Méthode qui permet de chercher les bouteilles
-     * depuis l'API du backend pour faire la recherche
-     * et des filtres s.lectionnés
-     */
     async fetchBouteilles() {
       try {
-        //Envois d'une requête Get vers l'API Laravel
         const res = await axios.get("/api/bouteilles", {
           params: {
-            //Terme de recherche entré par l'usager
             recherche: this.search,
-
-            //Filtres sélectionnés par l'usager
             filters: this.selected,
-            // Tri séléctionné par l'usager
             tri: this.tri,
           },
         });
 
-        //Mise a jour de la liste des bouteilles affichées
         this.bouteilles = res.data.data || res.data;
 
-        //Mise a jour des filtres disponibles dynamiquement
-        //envoyés par le backend
         if (res.data.filters) {
           this.filters = res.data.filters;
         }
-      } catch (error) {
-        //Gestion des erreurs
-        console.error("Erreur chargement bouteilles :", error);
+      } catch (e) {
+        console.error(e);
       }
     },
 
-    // Envoie de requete pour modifier le nombre des bouteilles
-    async modifierQuantiteVin(nouvelleQuantite, id) {
-      if (nouvelleQuantite < 1) return;
+    async modifierQuantiteVin(qte, id) {
+      if (qte < 1) return;
 
-      try {
-        await fetchCsrfToken();
-        await api.put(`/modifier-quantite/${id}`, {
-          quantite: nouvelleQuantite,
-        });
+      await fetchCsrfToken();
+      await api.put(`/modifier-quantite/${id}`, { quantite: qte });
 
-        // Doit frait un "refresh" pour voir la nouvel quantite de chaque bouteille
-        this.fetchBouteilles();
-
-      } catch (erreur) {
-        console.error(erreur);
-      }
+      this.fetchBouteilles();
     },
 
-     //Ouvrire la modale de suppression de bouteille du cellier
-     ouvrirModale(id) {
+    ouvrirModale(id) {
       this.idASupprimer = id;
       this.afficherModale = true;
     },
 
-    // Une fois qui l'utilisateur confirme la suppression d'un bouteille du cellier
     async confirmerSuppression() {
-      try {
-        // supprimer grace a cette route dans le backend, qui supprime dans la DB
-        await api.delete(`/cellier-vins/${this.idASupprimer}`);
+      await api.delete(`/cellier-vins/${this.idASupprimer}`);
 
-        // Supprimer localement
-        this.bouteilles = this.bouteilles.filter((item) => item.id !== this.idASupprimer);
+      this.bouteilles = this.bouteilles.filter(
+        (b) => b.id !== this.idASupprimer,
+      );
 
-        // enlever l'affichage du Modale de suppression
-        this.afficherModale = false;
-        this.idASupprimer = null;
-
-        // Doit frait un "refresh" pour voir la bouteille supprimer
-        this.fetchBouteilles();
-
-      } catch (err) {
-        this.erreur =
-          "Erreur lors de la suppression d'une bouteille dans ce cellier";
-      }
+      this.afficherModale = false;
+      this.fetchBouteilles();
     },
 
-    // Push vers la page du detail de la bouteille
     voirDetail(id) {
       this.$router.push(`/cellier-vin/${id}`);
+    },
+
+    reinitialiserFiltres() {
+      this.selected = {
+        countries: [],
+        regions: [],
+        cepages: [],
+        prix: { min: null, max: null },
+        format: { min: null, max: null },
+        degres: { min: null, max: null },
+        millesimes: { min: null, max: null },
+        couleur: [],
+        reinitialiser: this.selected.reinitialiser + 1,
+      };
+
+      this.search = "";
+      this.fetchBouteilles();
     },
   },
 
   mounted() {
-    /**
-     * Appelé automatiquement quand le composant est chargé
-     * Elle permet d'afficher les bouteilles dès l'ouverture de la page
-     */
     this.fetchBouteilles();
   },
 };

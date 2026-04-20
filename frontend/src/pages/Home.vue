@@ -37,50 +37,57 @@
 
         <ul class="filter-list">
           <ColorFilter v-model="selected.couleur" />
-          <FilterSection
-            title="Pays"
+          <FilterSelect
+            :key="reinitialiser"
+            label="Pays"
             :items="countries"
             v-model="selected.countries"
-            clearable
-          />
-          <FilterSection
-            title="Régions"
-            :items="regions"
-            v-model="selected.regions"
-            clearable
-          />
-          <FilterSection
-            title="Cépages"
-            :items="cepages"
-            v-model="selected.cepages"
-            clearable
-          />
-          <FilterSection
-            title="Prix ($)"
-            :items="prix"
-            v-model="selected.prix"
-            clearable
-          />
-          <FilterSection
-            title="Format (ml)"
-            :items="formats"
-            v-model="selected.formats"
-            clearable
-          />
-          <FilterSection
-            title="Degré (%)"
-            :items="degres"
-            :formatter="formatAlcohol"
-            v-model="selected.degres"
-            clearable
           />
 
-          <FilterSection
-            title="Millésime"
+          <FilterSelect
+            :key="reinitialiser"
+            label="Régions"
+            :items="regions"
+            v-model="selected.regions"
+          />
+
+          <FilterSelect
+            :key="reinitialiser"
+            label="Cépages"
+            :items="cepages"
+            v-model="selected.cepages"
+          />
+          <FourchetteFiltre
+            :key="reinitialiser"
+            v-if="prix && prix.min !== undefined"
+            v-model="selected.prix"
+            :minLimit="prix.min"
+            :maxLimit="prix.max"
+          />
+          <FourchetteFiltre
+            :key="reinitialiser"
+            v-model="selected.format"
+            :minLimit="formats.min"
+            :maxLimit="formats.max"
+            label="Format (ml)"
+          />
+          <FourchetteFiltre
+            :key="reinitialiser"
+            v-model="selected.degres"
+            :minLimit="formatDonnees(degres.min)"
+            :maxLimit="formatDonnees(degres.max)"
+            label="Degré (%)"
+          />
+
+          <AnneeFiltreSelect
+            :key="reinitialiser"
             :items="millesimes"
             v-model="selected.millesimes"
-            clearable
+            label="Millésimes"
           />
+          <button class="reset-filters" @click="reinitialiserFiltres">
+            Réinitialiser les filtres
+          </button>
         </ul>
       </aside>
     </div>
@@ -114,6 +121,9 @@ import Navbar from "../components/Navbar.vue";
 import Pagination from "../components/Pagination.vue";
 import { Search, ListFilter, ArrowDownNarrowWide } from "lucide-vue-next";
 import FilterSection from "../components/FilterSelection.vue";
+import FourchetteFiltre from "../components/Fourchette.vue";
+import FilterSelect from "../components/FiltreSelect.vue";
+import AnneeFiltreSelect from "../components/AnneeFiltreSelect.vue";
 import ColorFilter from "../components/ColorFilter.vue";
 import ModalTri from "../components/ModalTri.vue";
 
@@ -128,6 +138,9 @@ export default {
     FilterSection,
     ColorFilter,
     ModalTri,
+    FourchetteFiltre,
+    FilterSelect,
+    AnneeFiltreSelect,
   },
 
   data() {
@@ -141,11 +154,24 @@ export default {
         countries: [],
         regions: [],
         cepages: [],
-        prix: [],
-        formats: [],
-        degres: [],
-        millesimes: [],
+        prix: {
+          min: null,
+          max: null,
+        },
+        format: {
+          min: null,
+          max: null,
+        },
+        degres: {
+          min: null,
+          max: null,
+        },
+        millesimes: {
+          min: null,
+          max: null,
+        },
         couleur: [],
+        reinitialiser: 0,
       },
       wineStore: useWineStore(),
       termeDeRecherche: "",
@@ -174,16 +200,26 @@ export default {
       return this.wineStore.filters.cepages || [];
     },
     prix() {
-      return this.wineStore.filters.prix || [];
+      return this.wineStore.filters.prix || { min: 0, max: 0 };
     },
     formats() {
-      return this.wineStore.filters.formats || [];
+      return this.wineStore.filters.format || { min: 0, max: 0 };
     },
     degres() {
-      return this.wineStore.filters.degres || [];
+      return this.wineStore.filters.degres || { min: 0, max: 0 };
     },
+
     millesimes() {
-      return this.wineStore.filters.millesimes || [];
+      const range = this.wineStore.filters.millesimes;
+
+      if (!range || range.min == null || range.max == null) return [];
+
+      const years = [];
+      for (let y = range.max; y >= range.min; y--) {
+        years.push(y);
+      }
+
+      return years;
     },
   },
 
@@ -205,7 +241,7 @@ export default {
   },
 
   methods: {
-    formatAlcohol(value) {
+    formatDonnees(value) {
       if (!value) return "-";
       const num = parseFloat(value);
       return isNaN(num) ? value : num.toFixed(2);
@@ -218,6 +254,10 @@ export default {
     toggleTri() {
       this.showTri = !this.showTri;
     },
+    PrixChange() {
+      this.page = 1;
+      this.fetchWines();
+    },
 
     async fetchWines() {
       const filters = {};
@@ -225,32 +265,50 @@ export default {
         filters.countries = this.selected.countries;
       if (this.selected.regions.length) filters.regions = this.selected.regions;
       if (this.selected.cepages.length) filters.cepages = this.selected.cepages;
-      if (this.selected.prix.length) {
+      if (
+        this.selected.prix &&
+        (this.selected.prix.min !== null || this.selected.prix.max !== null)
+      ) {
         filters.prix = this.selected.prix;
       }
-      if (this.selected.formats.length) filters.formats = this.selected.formats;
-      if (this.selected.degres.length) filters.degres = this.selected.degres;
-      if (this.selected.millesimes.length)
+      if (
+        this.selected.format &&
+        (this.selected.format.min !== null || this.selected.format.max !== null)
+      ) {
+        filters.format = this.selected.format;
+      }
+      if (
+        this.selected.degres &&
+        (this.selected.degres.min !== null || this.selected.degres.max !== null)
+      ) {
+        filters.degres = this.selected.degres;
+      }
+
+      if (
+        this.selected.millesimes &&
+        (this.selected.millesimes.min !== null ||
+          this.selected.millesimes.max !== null)
+      ) {
         filters.millesimes = this.selected.millesimes;
+      }
       if (this.selected.couleur.length) filters.couleur = this.selected.couleur;
-      await this.wineStore.fetchAllWines(this.page, this.perPage, filters);
+
       await this.wineStore.fetchAllWines(
         this.page,
         this.perPage,
         filters,
         this.termeDeRecherche,
-        this.tri
+        this.tri,
       );
     },
 
-    // pour la barre de recherche, va chercher tous les vins contenu dans cette recherche
     async rechercherVins() {
       const filters = {};
       await this.wineStore.fetchAllWines(
         0,
         this.perPage,
         filters,
-        this.termeDeRecherche
+        this.termeDeRecherche,
       );
     },
 
@@ -274,6 +332,24 @@ export default {
       this.tri = triChoisi;
       this.fetchWines();
       this.showTri = false;
+    },
+
+    reinitialiserFiltres() {
+      this.selected = {
+        countries: [],
+        regions: [],
+        cepages: [],
+        prix: { min: null, max: null },
+        format: { min: null, max: null },
+        degres: { min: null, max: null },
+        millesimes: { min: null, max: null },
+        couleur: [],
+      };
+
+      this.termeDeRecherche = "";
+      this.page = 1;
+      this.reinitialiser++;
+      this.fetchWines();
     },
   },
 
