@@ -2,10 +2,7 @@
   <div class="banniere">
     <h2 class="banniere-titre">Modifier vos données</h2>
   </div>
-  <div v-if="messageSucces" class="bloc-modale-succes">
-    {{ messageSucces }}
-  </div>
-  <div v-else><Navbar /></div>
+  <Navbar />
   <div class="container-plain">
     <form @submit.prevent="updateUsager" class="bloc-form">
       <div>
@@ -18,6 +15,9 @@
 
       <div>
         <label>Courriel :</label>
+        <span class="bloc-form-message"
+          >Modifier le courriel entraîne une redirection vers la connexion</span
+        >
         <input
           type="email"
           v-model="courriel"
@@ -27,7 +27,7 @@
           {{ erreurs.courriel[0] }}
         </div>
       </div>
-      <button type="submit" class="signup-btn">Modifier votre compte</button>
+      <button type="submit" class="signup-btn">Modifier</button>
     </form>
   </div>
 </template>
@@ -62,7 +62,7 @@ export default {
       try {
         const id = this.$route.params.id;
         const response = await axios.get(
-          `http://localhost:8000/api/usagers/${id}`,
+          `http://localhost:8000/api/usagers/${id}`
         );
 
         this.nom = response.data.data.nom;
@@ -89,17 +89,13 @@ export default {
           nom: this.nom,
           courriel: this.courriel,
         });
-        this.messageSucces = "Votre compte a été mis à jour avec succès !";
 
-        setTimeout(() => {
-          this.messageSucces = "";
-          if (this.ancien_courriel !== this.courriel) {
-            this.ancien_courriel = this.courriel;
-            this.$router.push("/connexion-usager");
-          } else {
-            this.$router.push("/profil-usager");
-          }
-        }, 3000);
+        if (this.ancien_courriel !== this.courriel) {
+          this.ancien_courriel = this.courriel;
+          this.$router.push("/connexion-usager");
+        } else {
+          this.$router.push("/profil-usager");
+        }
       } catch (erreur) {
         if (erreur.response && erreur.response.status === 422) {
           this.erreurs = erreur.response.data.erreurs;
