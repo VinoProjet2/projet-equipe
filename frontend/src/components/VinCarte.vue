@@ -84,11 +84,6 @@ export default {
     retour() {
       this.$router.go(-1);
     },
-
-    // Permet redirectionner vers Note.vue
-    allerNote() {
-      this.$router.push(`/note/${this.bouteilleVin.id}`);
-    },
   },
 };
 </script>
