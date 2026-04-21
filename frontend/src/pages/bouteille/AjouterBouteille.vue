@@ -1,12 +1,15 @@
 <template>
+  <!-- Affichage de la barre de navigation -->
   <Navbar />
   <div v-if="messageSucces" class="bloc-modale-succes">
     {{ messageSucces }}
   </div>
+  <!-- Formulaire pour ajouter une bouteille au cellier -->
   <div>
     <form class="bloc-form" @submit.prevent="ajouterBouteille">
       <h1 class="profil-titre">Ajouter la bouteille au cellier</h1>
       <label>Nom du cellier </label>
+      <!-- Affichage d'un menu déroulant pour sélectionner le cellier où ajouter la bouteille -->
       <select class="form-input" v-model="cellier_id">
         <option disabled value="">Choisir un cellier</option>
         <option
@@ -20,6 +23,7 @@
       <div v-if="erreurs.cellier_id" class="erreur">
         {{ erreurs.cellier_id[0] }}
       </div>
+      <!-- Champ pour saisir la quantité de bouteilles à ajouter -->
       <label>Quantité de bouteilles </label>
       <input
         class="form-input"
@@ -41,6 +45,7 @@
 <script>
 import Navbar from "../../components/Navbar.vue";
 import api from "../../api";
+import { useNotifStore } from '../../stores/notification';
 
 export default {
   components: {
@@ -52,7 +57,7 @@ export default {
       celliers: [],
       erreurs: {},
       cellier_id: "",
-      quantite: 0,
+      quantite: "",
       vin_id: 0,
       message: "",
       messageSucces: "",
@@ -65,7 +70,7 @@ export default {
         const response = await api.get("/celliers");
         this.celliers = response.data.data;
       } catch (erreur) {
-        this.erreur = "Une erreur est survenue";
+        this.message = "Une erreur est survenue";
       }
     },
     // méthode pour ajouter une bouteille au cellier
@@ -87,19 +92,24 @@ export default {
 
         this.cellierVin = response.data;
 
-        // afficher un message de succès et rediriger vers le catalogue après 2 secondes
-        this.messageSucces =
-          "Votre bouteille a été ajoutée au cellier avec succès !";
-        setTimeout(() => {
-          this.messageSucces = "";
-          this.$router.back();
-        }, 2000);
+        //envoy une notification au catalogue, une fois qu'on y retourne
+        const notif = useNotifStore();
+        notif.montreMessage('Votre bouteille a été ajoutée au cellier avec succès!', 'bloc-modale-succes');
+
+        this.$router.push('/catalogue');
+
       } catch (erreur) {
         if (erreur.response.data.errors) {
           this.erreurs = erreur.response.data.errors;
         } else {
           if (erreur.response.data.message) {
             this.message = erreur.response.data.message;
+
+            //envoy une notification d'erreurs au catalogue, une fois qu'on y retourne
+            const notif = useNotifStore();
+            notif.montreMessage(this.message, 'erreur');
+
+            this.$router.push('/catalogue');
           }
         }
       }

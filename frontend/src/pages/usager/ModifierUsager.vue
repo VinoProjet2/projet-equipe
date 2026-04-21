@@ -4,6 +4,7 @@
   </div>
   <Navbar />
   <div class="container-plain">
+    <!-- Formulaire de modification des données de l'usager -->
     <form @submit.prevent="updateUsager" class="bloc-form">
       <div>
         <label>Nom :</label>
@@ -29,6 +30,7 @@
         </div>
       </div>
       <button type="submit" class="signup-btn">Modifier</button>
+      <p v-if="erreur" class="erreur">{{ erreur }}</p>
     </form>
   </div>
 </template>
@@ -48,6 +50,7 @@ export default {
       mot_de_passe: "",
       erreurs: {},
       messageSucces: "",
+      erreur: "",
     };
   },
   mounted() {
@@ -84,25 +87,82 @@ export default {
       this.erreurs = {};
       this.messageSucces = "";
       try {
+        // Récupérer le token CSRF avant d'envoyer la requête PUT
         await fetchCsrfToken();
-        const id = this.$route.params.id; // récupère l'id dans l'URL
+        const id = this.$route.params.id;
+        // Envoyer la requête PUT pour mettre à jour les données de l'usager
         const response = await api.put(`/usagers/${id}`, {
           nom: this.nom,
           courriel: this.courriel,
         });
-
+        // Afficher un message de succès
         if (this.ancien_courriel !== this.courriel) {
           this.ancien_courriel = this.courriel;
           this.$router.push("/connexion-usager");
         } else {
+          // Rediriger vers la page de profil après la mise à jour
           this.$router.push("/profil-usager");
         }
       } catch (erreur) {
         if (erreur.response && erreur.response.status === 422) {
           this.erreurs = erreur.response.data.erreurs;
         }
+        else if (erreur.response.status === 403) {
+          this.erreur = "Vous n'avez pas la permission de modifier ce profil";
+        }
+        else if (erreur.response.status === 404) {
+          this.erreur = "Utilisateur non trouvé";
+        }
+        else if (erreur.response.status === 401) {
+          this.erreur= "Session expirée. Veuillez vous reconnecter";
+          setTimeout(() => {
+            this.$router.push("/connexion-usager");
+          }, 2000);
+        }
+        else if (erreur.response.status === 500) {
+          this.erreur = "Erreur serveur. Veuillez réessayer plus tard";
+        }
+        else {
+          this.erreur = erreur.response.data.message || "Une erreur est survenue lors de la mise à jour";
+        }
       }
-    },
+    }
   },
 };
 </script>
+<<<<<<< HEAD
+=======
+<style scoped>
+@media (min-width: 1024px) {
+  .banniere {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .container-plain {
+    max-width: 550px;
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .bloc-form {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bloc-form input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .signup-btn {
+    width: 100%;
+    max-width: 280px;
+    margin: 2rem auto !important;
+    display: block;
+  }
+}
+</style>
+>>>>>>> refs/remotes/origin/main

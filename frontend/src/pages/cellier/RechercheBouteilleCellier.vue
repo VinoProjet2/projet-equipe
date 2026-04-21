@@ -4,7 +4,7 @@
   <div class="banniere">
     <h1 class="banniere-titre">Recherche bouteille dans les celliers</h1>
   </div>
-
+  <!-- recherche des bouteilles dans les celliers de l'usager -->
   <div class="search-container">
     <Search class="search-icon" />
     <input
@@ -32,7 +32,7 @@
     :class="{ active: showFilter }"
     @click="toggleFilter"
   ></div>
-
+  <!-- filtrer les bouteilles qui existent dans les celliers de l'usager -->
   <aside class="filter-panel" :class="{ active: showFilter }">
     <div class="filter-header">
       <h2>Filtres</h2>
@@ -102,7 +102,7 @@
     @apply="appliquerTri"
     @close="showTri = false"
   />
-
+  <!-- afficher la liste des bouteilles trouvées, et les actions associées -->
   <div class="liste-bouteilles">
     <div
       v-for="bouteille in bouteilles"
@@ -132,21 +132,18 @@
           <CirclePlus />
         </button>
       </div>
-
+      <!-- boutons d'action pour chaque bouteille : Afficher les détails, ajouter à la liste de courses, supprimer -->
       <div class="bouton-cellier">
-        <button @click="ouvrirModale(bouteille.id)" class="btn btn-cellier">
-          <Trash />
-        </button>
-
         <button @click="voirDetail(bouteille.id)" class="btn btn-cellier">
           <Eye />
         </button>
 
-        <button
-          class="btn btn-cellier"
-          @click="ajouterListeAchats(bouteille.id)"
-        >
-          <ShoppingBasket />
+          <button class="btn btn-cellier" @click="ajouterListeAchats(bouteille.vin.id)">
+            <ShoppingBasket class="icons" />
+          </button>
+
+        <button @click="ouvrirModale(bouteille.id)" class="btn btn-cellier">
+          <Trash />
         </button>
       </div>
 
@@ -159,7 +156,7 @@
       </div>
     </div>
   </div>
-
+  <!-- modale de confirmation de suppression -->
   <ModalConfirmation
     :show="afficherModale"
     message="Voulez-vous supprimer ce vin de ce cellier ?"
@@ -192,6 +189,7 @@ import ColorFilter from "../../components/ColorFilter.vue";
 import ModalTri from "../../components/ModalTri.vue";
 import ModalConfirmation from "../../components/ModalConfirmation.vue";
 import { useWineStore } from "../../stores/wineStore";
+import { useAuthStore } from "../../stores/auth";
 
 import axios from "axios";
 import api, { fetchCsrfToken } from "../../api";
@@ -253,10 +251,11 @@ export default {
   },
 
   watch: {
+    // relancer la recherche à chaque changement de la barre de recherche ou des filtres
     search() {
       this.fetchBouteilles();
     },
-
+    // relancer la recherche à chaque changement de la barre de recherche ou des filtres
     selected: {
       handler() {
         this.fetchBouteilles();
@@ -266,6 +265,7 @@ export default {
   },
 
   methods: {
+    // fonction utilitaire pour extraire les valeurs min et max d'un tableau de valeurs
     getMinMax(array) {
       if (!Array.isArray(array) || array.length === 0) {
         return { min: 0, max: 0 };
@@ -278,24 +278,26 @@ export default {
         max: Math.max(...nums),
       };
     },
+    // fonction utilitaire pour convertir une valeur en nombre, ou retourner 0 si ce n'est pas un nombre
     safeNumber(val) {
       const n = Number(val);
       return isNaN(n) ? 0 : n;
     },
+    // fonction pour ajouter une bouteille à la liste de courses
     toggleFilter() {
       this.showFilter = !this.showFilter;
     },
-
+    // fonction pour appliquer le tri sélectionné dans la modale de tri
     appliquerTri(val) {
       this.tri = val;
       this.fetchBouteilles();
       this.showTri = false;
     },
-
+    // fonction pour ajouter une bouteille à la liste de courses
     async fetchBouteilles() {
       try {
         const filters = {};
-
+        // construire l'objet de filtres à partir des sélections de l'utilisateur
         if (this.selected.countries.length)
           filters.countries = this.selected.countries;
 
@@ -339,9 +341,9 @@ export default {
             tri: this.tri,
           },
         });
-
+        // mettre à jour la liste des bouteilles avec les résultats de la recherche
         this.bouteilles = res.data.data || [];
-
+        // mettre à jour les options de filtres disponibles en fonction des résultats de la recherche
         if (res.data.filters) {
           this.filters = {
             countries: res.data.filters.countries || [],
@@ -360,7 +362,7 @@ export default {
         console.error(e);
       }
     },
-
+    // fonction pour ajouter une bouteille à la liste de courses
     async modifierQuantiteVin(qte, id) {
       if (qte < 1) return;
 
@@ -369,12 +371,12 @@ export default {
 
       this.fetchBouteilles();
     },
-
+    // fonction pour ajouter une bouteille à la liste de courses
     ouvrirModale(id) {
       this.idASupprimer = id;
       this.afficherModale = true;
     },
-
+    // fonction pour ajouter une bouteille à la liste de courses
     async confirmerSuppression() {
       await api.delete(`/cellier-vins/${this.idASupprimer}`);
 
@@ -384,12 +386,60 @@ export default {
 
       this.afficherModale = false;
     },
-
+    // fonction pour ajouter une bouteille à la liste de courses
     voirDetail(id) {
       this.$router.push(`/cellier-vin/${id}`);
     },
 
-    reinitialiserFiltres() {
+    //ajoute une bouteille a la liste d'achar
+    async ajouterListeAchats(idVin) {
+
+      //Veut filtres les bouteilles, pour juste recuperer les bouteilles avec id concernees
+      const bouteillesConcernees = this.bouteilles.filter((b) => b.vin.id === idVin);
+
+      // Réinitialiser les messages
+      bouteillesConcernees.forEach((bouteille) => {
+        bouteille.messageAjout = null;
+        bouteille.messageErreur = null;
+      });
+
+      try {
+
+        // CSRF token
+        await fetchCsrfToken();
+
+        // Récupérer l'utilisateur connecté
+        const authStore = useAuthStore();
+        await authStore.fetchUsager();
+        const usagerId = authStore.usager.id;
+
+        // Récupérer l'id du vin
+        const vinId = idVin;
+
+        //appel api pour ajouter a la BD
+        const response = await api.post("/ajouter-bouteille-liste", {
+          usager_id: usagerId,
+          vin_id: vinId,
+        });
+
+        if (response.status === 200 || response.status === 201){
+          // afficher un message de succès
+          bouteillesConcernees.forEach((bouteille) => {
+            bouteille.messageAjout = response.data.message || "Bouteille ajoutée à la liste d'achat !";
+            setTimeout(() => { bouteille.messageAjout = null; }, 2000);
+          });
+        }
+
+      } catch (erreur) {
+        // afficher message d'erreur
+        bouteillesConcernees.forEach((bouteille) => {
+          bouteille.messageErreur = "Cette bouteille est déjà dans votre liste d'achat";
+          setTimeout(() => { bouteille.messageErreur = null; }, 3000);
+        });
+      }
+    },
+     // fonction pour ajouter une bouteille à la liste de courses
+     reinitialiserFiltres() {
       this.selected = {
         countries: [],
         regions: [],

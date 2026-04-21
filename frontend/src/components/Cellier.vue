@@ -4,7 +4,7 @@
     <div class="cellier-item">
       <div class="vin-cellier-carte">
         <img
-          src="../../public/cellier.svg"
+          src="../assets/img/cellier1.svg"
           alt="bouteille"
           class="cellier-img"
         />
@@ -57,6 +57,7 @@ export default {
     // Naviguer vers la page de modification du cellier
     async modifierCellier() {
       try {
+        // rediriger vers la page de modification du cellier
         this.$router.push(`/modifier-cellier/${this.cellier.id}`);
       } catch (erreur) {
         this.erreur = "Erreur lors de la modification";

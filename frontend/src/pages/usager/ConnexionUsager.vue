@@ -1,8 +1,16 @@
 <template>
+  <!-- Page dedie à la connexion des usagers -->
   <div class="container">
     <div class="bloc-img">
       <img src="../../assets/img/logo3.svg" />
     </div>
+
+    <!-- Affiche une notification -->
+    <div v-if="notifStore.message" :class="['notif', notifStore.type]">
+      {{ notifStore.message }}
+    </div>
+
+    <!-- Formulaire de connexion -->
     <form class="bloc-form" @submit.prevent="connexion">
       <div>
         <label for="courriel">Courriel</label>
@@ -14,6 +22,7 @@
           required
         />
       </div>
+      <!-- Mot de passe -->
       <div>
         <label for="mot_de_passe">Mot de passe</label>
         <input
@@ -24,6 +33,7 @@
           required
         />
       </div>
+      <!-- Bouton de soumission -->
       <button class="signup-btn" type="submit" :disabled="loading">
         {{ loading ? "Connexion..." : "Se Connecter" }}
       </button>
@@ -39,6 +49,7 @@
 <script>
 import api, { fetchCsrfToken } from "../../api";
 import { useAuthStore } from "../../stores/auth";
+import { useNotifStore } from '../../stores/notification';
 
 export default {
   data() {
@@ -65,20 +76,40 @@ export default {
           mot_de_passe: this.mot_de_passe,
         });
 
-        // Mise à jour du store utilisateur
-        const authStore = useAuthStore();
-        await authStore.fetchUsager();
+        //si la connexion a bien reussi
+        if (response.status === 200){
+          // Mise à jour du store utilisateur
+          const authStore = useAuthStore();
+          await authStore.fetchUsager();
 
-        // Redirection vers le catalogue
-        this.$router.push("/catalogue");
+          //ajout d'une notification pour le catalogue
+          const notif = useNotifStore();
+          notif.montreMessage('Vous avez été connecté avec succès!', 'bloc-modale-succes');
+          // Redirection vers le catalogue
+          this.$router.push("/catalogue");
+        }
 
-        // Catch les erreurs
+
       } catch (err) {
-        if (err.response) {
-          this.erreur = "Erreur de connexion";
-        } else if (err.request) {
+        // Catch les erreurs
+        if (err.response && err.response.status === 422) {
+          const errors = err.response.data.errors;
+          if (errors) {
+            this.erreur = Object.values(errors)[0][0];
+          } else {
+            this.erreur = err.response.data.message || "Erreur de validation";
+          }
+        }
+        else if (err.response && err.response.status === 401) {
+          this.erreur = err.response.data.message || "Courriel ou mot de passe incorrect";
+        }
+        else if (err.response) {
+          this.erreur = err.response.data.message || "Erreur de connexion";
+        }
+        else if (err.request) {
           this.erreur = "Impossible de joindre le serveur";
-        } else {
+        }
+        else {
           this.erreur = "Une erreur est survenue";
         }
         // arreter l'affichage de 'Connexion'
@@ -87,5 +118,55 @@ export default {
       }
     },
   },
+  setup() {
+    const notifStore = useNotifStore();
+    return { notifStore };
+  }
 };
 </script>
+<<<<<<< HEAD
+=======
+<style scoped>
+@media (min-width: 1024px) {
+  .container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
+    max-width: 1200px;
+    margin: 5rem auto;
+  }
+
+  .bloc-img {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    margin: 0;
+    max-height: 400px;
+  }
+
+  .bloc-img img {
+    max-width: 350px;
+    height: auto;
+  }
+
+  .bloc-form {
+    flex: 1;
+    max-width: 450px;
+    margin: 0;
+    text-align: left;
+  }
+
+  .signup-btn {
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+
+  .already-txt {
+    text-align: center;
+    margin-top: 1rem;
+  }
+}
+</style>
+>>>>>>> refs/remotes/origin/main

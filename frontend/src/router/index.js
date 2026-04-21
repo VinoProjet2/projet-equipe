@@ -16,6 +16,7 @@ import RechercheBouteilleCellier from "../pages/cellier/RechercheBouteilleCellie
 import ListeAchats from "../pages/achats/ListeAchats.vue";
 import ModifierBouteillePerso from "../pages/bouteille/ModifierBouteillePerso.vue";
 import ListeAchatBouteille from "../pages/achats/ListeAchatBouteille.vue";
+import Note from "../pages/notes/Note.vue";
 
 const routes = [
   {
@@ -103,9 +104,16 @@ const routes = [
     component: ListeAchats,
     meta: { requiresAuth: true },
   },
+
   {
     path: "/liste-achats-vin/:id",
     component: ListeAchatBouteille,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: "/note/:id",
+    component: Note,
     meta: { requiresAuth: true },
   },
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usager;
+use App\Models\Cellier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -25,9 +26,8 @@ class UsagerController extends Controller
     ];
 
     /**
-     * Récupération des usagers
-     *
-     * @return void
+     * Récupère des usagers.
+     * @return view
      */
     public function index()
     {
@@ -40,6 +40,8 @@ class UsagerController extends Controller
      * Enregistrement d'usager 
      * personnalisation des messages d'erreur
      * faire la validation des données formulaire
+     * @param Request $request
+     * @return json
      */
 
     public function store(Request $request)
@@ -63,6 +65,25 @@ class UsagerController extends Controller
             'courriel' => $validated['courriel'],
             'mot_de_passe' => Hash::make($validated['mot_de_passe']),
         ]);
+
+        // Création du cellier par défaut pour le nouvel usager
+        if (!$usager) {
+            throw new HttpResponseException(response()->json([
+                'message' => 'Erreur lors de la création de l usager.'
+            ], 500));
+        }
+
+        $cellierParDefaut = Cellier::create([
+            'nom' => 'Mon cellier',
+            'usager_id' => $usager->id,
+        ]);
+
+        // Si la création du cellier par défaut échoue -> retourner une erreur
+        if (!$cellierParDefaut) {
+            throw new HttpResponseException(response()->json([
+                'message' => 'Erreur lors de la création du cellier par défaut.'
+            ], 500));
+        }
 
         return response()->json([
             'message' => 'Usager créé avec succès',
@@ -123,7 +144,7 @@ class UsagerController extends Controller
     /**
      * Affiche les informations d’un usager spécifique.
      * @param int $id 
-     * @return JsonResponse 
+     * @return json 
      */
     public function show($id)
     {
@@ -141,14 +162,15 @@ class UsagerController extends Controller
         }
     }
 
-
-    // Supprimer le compte de l'usager connecté
+    /**
+     * Supprime le compte de l'usager connecté
+     * @param Request $request
+     * @return json
+     */
     public function supprimerUsager(Request $request)
     {
         $usager = $request->user();
-
         $usager->delete();
-
         return response()->json(['message' => 'Votre Compte est supprimé']);
     }
 }

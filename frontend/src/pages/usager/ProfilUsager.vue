@@ -3,6 +3,7 @@
   <div class="banniere">
     <h2 class="banniere-titre">Mon profil</h2>
   </div>
+  <!-- Contenu de la page de profil -->
   <div class="profil-page">
     <div class="profil-carte">
       <p v-if="erreur">{{ erreur }}</p>
@@ -11,6 +12,7 @@
         <p class="profil-data">Courriel : {{ usager.courriel }}</p>
       </div>
     </div>
+    <!-- Actions disponibles pour l'usager -->
     <div class="profil-action profil-lien">
       <router-link
         v-if="usager"
@@ -61,6 +63,7 @@
 import { MinusCircleIcon } from "@heroicons/vue/24/solid";
 import { PencilIcon } from "@heroicons/vue/24/solid";
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/vue/24/solid";
+import { useNotifStore } from '../../stores/notification';
 </script>
 
 <script>
@@ -95,7 +98,7 @@ export default {
       // todo : Ajouter une boite modale
       this.afficherModale = true;
     },
-
+    // Confirme la suppression du compte de l'usager et redirige vers la page de connexion
     async confirmerSuppression() {
       try {
         // suppression du compte de l'usager
@@ -108,11 +111,17 @@ export default {
         this.erreur = "Erreur lors de la suppression";
       }
     },
-
+    //
     async deconnecterUsager() {
       try {
+
         //deconnexion du compte de l'usager
         await api.post("/deconnexion");
+
+        //ajout d'une notification pour le catalogue
+        const notif = useNotifStore();
+        notif.montreMessage('Vous avez été deconnecté avec succès!', 'bloc-modale-succes');
+
         // Redirige vers la page de connexion après la déconnexion
         this.$router.push("/connexion-usager");
       } catch (erreur) {
@@ -126,3 +135,48 @@ export default {
   },
 };
 </script>
+<<<<<<< HEAD
+=======
+
+<style scoped>
+@media (min-width: 1024px) {
+  .profil-page {
+    max-width: 850px;
+    margin: 4rem auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .profil-carte,
+  .profil-action {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .banniere-titre {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .profil-action {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .profil-action-icone {
+    justify-content: center;
+    padding: 1.2rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .profil-action-icone:hover {
+    background-color: #f9f9f9;
+  }
+}
+</style>
+>>>>>>> refs/remotes/origin/main

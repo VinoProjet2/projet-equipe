@@ -5,16 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Modèle représentant un cellier.
- */
-class Cellier extends Model
+class VinNote extends Model
 {
     use HasFactory;
+    protected $table = 'vin_notes';
     // attributs pouvant être assignés en masse
     protected $fillable = [
-        'usager_id',
-        'nom',
+        'note',
+        'commentaire'
     ];
 
     // ajouter la relation avec Usager
@@ -24,8 +22,8 @@ class Cellier extends Model
     }
 
     // ajouter la relation avec CellierVin
-    public function cellierVins()
+    public function vins()
     {
-        return $this->hasMany(CellierVin::class);
+        return $this->belongsTo(Vin::class);
     }
 }

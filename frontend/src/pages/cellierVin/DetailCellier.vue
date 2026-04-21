@@ -4,6 +4,7 @@
   <div class="banniere">
     <h1 class="banniere-titre">Cellier: {{ cellierNom }}</h1>
   </div>
+  <!-- Lien pour ajouter une bouteille personnalisée -->
   <div>
     <router-link
       class="cellier-lien-ajout-bouteille"
@@ -13,6 +14,7 @@
       <ChevronRightIcon class="cellier-icone-ajout-bouteille" />
     </router-link>
   </div>
+  <!-- Cartes des vins du cellier -->
   <VinCellierCarte
     v-for="item in vins"
     :key="item.id"
@@ -22,7 +24,7 @@
     @ouvrir-modale="ouvrirModale"
     @update-quantite="mettreAJourQuantite"
   />
-
+  <!-- Modale de confirmation de suppression -->
   <ModalConfirmation
     :show="afficherModale"
     message="Voulez-vous supprimer ce vin de ce cellier ?"
@@ -32,7 +34,6 @@
     @cancel="afficherModale = false"
   />
   <div class="espacement"></div>
-
 </template>
 
 <script setup>
@@ -109,6 +110,7 @@ export default {
       }
     },
   },
+  // Afficher les details du cellier (incluant les vins et leur quantite) une fois que la page est monté
   mounted() {
     this.afficherDetailCellier();
   },

@@ -4,7 +4,8 @@
   <div class="banniere">
     <h1 class="banniere-titre">Mes celliers</h1>
   </div>
-
+  <!-- boutons pour créer un nouveau cellier et pour faire une recherche de
+  bouteille dans les celliers -->
   <div class="entete-cellier">
     <button class="btn btn-entete-cellier" @click="creerCellier">
       <Plus class="icon" /> <span>Nouveau</span>
@@ -13,12 +14,14 @@
       <Search class="icon" /> <span>Recherche </span>
     </button>
   </div>
+  <!-- Liste des celliers -->
   <Cellier
     v-for="cellier in celliers"
     :key="cellier.id"
     :cellier="cellier"
     @ouvrir-modale="ouvrirModale"
   />
+  <!-- Modale de confirmation de suppression -->
   <ModalConfirmation
     :show="afficherModale"
     message="Voulez-vous supprimer ce cellier ?"
@@ -53,12 +56,13 @@ export default {
       idASupprimer: null,
     };
   },
-
+  // Récupérer les celliers de l'utilisateur lors du montage du composant
   mounted() {
     this.getCelliers();
   },
 
   methods: {
+    // Méthode pour récupérer les celliers de l'utilisateur
     async getCelliers() {
       try {
         const response = await axios.get("/api/celliers");
@@ -67,16 +71,20 @@ export default {
         console.error(error);
       }
     },
+    // Rediriger vers la page de création de cellier
     creerCellier() {
       this.$router.push("/creer-cellier");
     },
+    // Rediriger vers la page de recherche de bouteille dans les celliers
     rechercheBouteilleCellier() {
       this.$router.push("/recherche-bouteille-cellier");
     },
+    // Ouvrir la modale de confirmation de suppression
     ouvrirModale(id) {
       this.idASupprimer = id;
       this.afficherModale = true;
     },
+    // Confirmer la suppression du cellier
     async confirmerSuppression() {
       try {
         await fetchCsrfToken();
@@ -92,6 +100,7 @@ export default {
         console.error(err);
       }
     },
+    // Méthode pour supprimer un cellier de la liste après la suppression réussie
     supprimerDansListe(id) {
       this.celliers = this.celliers.filter((c) => c.id !== id);
     },

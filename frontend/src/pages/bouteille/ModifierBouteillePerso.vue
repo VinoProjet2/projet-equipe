@@ -1,10 +1,10 @@
 <template>
   <Navbar />
-
+  <!-- Affichage d'un message de succès après la modification de la bouteille -->
   <div v-if="messageSucces" class="bloc-modale-succes">
     {{ messageSucces }}
   </div>
-
+  <!-- Formulaire de modification d'une bouteille personnalisée -->
   <div>
     <form class="bloc-form" @submit.prevent="modifierVin">
       <h1 class="profil-titre">Modifier une bouteille personnalisée</h1>

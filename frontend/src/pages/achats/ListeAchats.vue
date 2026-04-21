@@ -1,12 +1,15 @@
 <template>
+  <!-- Affichage de la liste d'achats -->
   <Navbar />
   <div class="banniere">
     <h2 class="banniere-titre">Liste d'achats</h2>
   </div>
+  <!-- Description de la page -->
   <p class="catalogue-description">
     Ajoutez vos vins à vos celliers, consultez-les ou supprimez-les selon vos
     besoins!
   </p>
+  <!-- Affichage de chaque vin de la liste d'achat -->
   <Achat
     v-for="vin in vins"
     :key="vin.id"
@@ -14,7 +17,7 @@
     :id="vin.id"
     @ouvrir-modale="ouvrirModale"
   />
-
+  <!-- Affichage de la modale de confirmation de suppression d'un vin de la liste d'achat -->
   <ModalConfirmation
     :show="afficherModale"
     message="Voulez-vous supprimer ce vin de votre liste d'achat ?"
@@ -46,9 +49,7 @@ export default {
     };
   },
   methods: {
-    /**
-     * Récupère les informations de liste_achats
-     */
+    // Récupérer la liste d'achat de l'utilisateur connecté
     async saisirListeAchats() {
       try {
         await fetchCsrfToken();
@@ -84,6 +85,7 @@ export default {
       }
     },
   },
+  // Appel de la méthode pour récupérer les informations de la liste d'achat dès que le composant est monté
   mounted() {
     this.saisirListeAchats();
   },

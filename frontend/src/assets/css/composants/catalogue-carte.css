@@ -250,6 +250,7 @@
   font-size: var(--fs-18);
   color: var(--gris-fonce);
   padding: 10px 0;
+  text-align: center;
 }
 
 .home {

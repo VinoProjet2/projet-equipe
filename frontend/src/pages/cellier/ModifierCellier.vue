@@ -1,5 +1,6 @@
 <template>
   <Navbar />
+  <!-- Formulaire pour modifier le nom du cellier -->
   <div>
     <form @submit.prevent="modifierCellier" class="bloc-form">
       <h1 class="profil-titre">Modifier le cellier</h1>
@@ -34,7 +35,7 @@ export default {
     };
   },
   methods: {
-    // Modifier le nom du cellier
+    // Méthode pour modifier le cellier
 
     async modifierCellier() {
       try {
@@ -47,6 +48,7 @@ export default {
           nom: this.nom,
         });
         this.cellier = response.data;
+        // Rediriger vers le dashboard après la modification
         this.$router.push("/dashboard");
       } catch (erreur) {
         if (erreur.response.data.errors) {
