@@ -10,7 +10,11 @@
       <h1 class="profil-titre">Ajouter la bouteille au cellier</h1>
       <label>Nom du cellier </label>
       <!-- Affichage d'un menu déroulant pour sélectionner le cellier où ajouter la bouteille -->
-      <select class="form-input" v-model="cellier_id">
+      <select
+        class="form-input"
+        v-model="cellier_id"
+        aria-label="Choisir un cellier"
+      >
         <option disabled value="">Choisir un cellier</option>
         <option
           v-for="cellier in celliers"

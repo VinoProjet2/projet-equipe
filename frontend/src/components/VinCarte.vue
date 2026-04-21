@@ -5,13 +5,17 @@
     <div class="vin-entete">
       <div class="vin-bg"></div>
       <div class="vin-back" @click="retour">←</div>
-      <img :src="bouteilleVin.image" class="vin-image" />
+      <img
+        :src="bouteilleVin.image"
+        class="vin-image"
+        :alt="'Le nom du vin est : ' + bouteilleVin.nom"
+      />
       <div class="vin-note" @click="allerNote">Évaluer</div>
     </div>
     <div class="vin-contenu">
-      <h2 class="vin-titre">
+      <h1 class="vin-titre">
         {{ bouteilleVin.nom || "Nom inconnu" }}
-      </h2>
+      </h1>
       <div class="vin-footer">
         <div v-if="bouteilleVin.quantite" class="vin-stock">
           {{ bouteilleVin.quantite }} en stock • {{ cellierNom }}
