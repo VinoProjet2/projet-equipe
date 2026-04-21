@@ -21,8 +21,16 @@ class AuthController extends Controller
     {
         // Validation des données du formulaire de connexion
         $request->validate([
-            'courriel' => 'required|email|exists:usagers',
+            'courriel' => 'required|email|exists:usagers,courriel',
             'mot_de_passe' => 'required|min:6|string'
+        ],
+        [
+            'courriel.required' => 'Le courriel est obligatoire.',
+            'courriel.email' => 'Le courriel doit être une adresse email valide.',
+            'courriel.exists' => 'Aucun compte trouvé avec ce courriel.',
+            'mot_de_passe.required' => 'Le mot de passe est obligatoire.',
+            'mot_de_passe.string' => 'Le mot de passe doit être une chaîne de caractères.',
+            'mot_de_passe.min' => 'Le mot de passe doit contenir au moins 6 caractères.',
         ]);
 
         // Trouve le premier usager avec ce courriel
@@ -36,7 +44,7 @@ class AuthController extends Controller
                 'message' => 'Connexion réussie'
             ]);
         } else {
-            return response()->json(['message' => 'Les informations de connexion ne sont pas valid'], 401);
+            return response()->json(['message' => 'Mot de passe incorrect'], 401);
         }
     }
 

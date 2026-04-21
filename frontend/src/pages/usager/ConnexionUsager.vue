@@ -69,20 +69,37 @@ export default {
           mot_de_passe: this.mot_de_passe,
         });
 
-        // Mise à jour du store utilisateur
-        const authStore = useAuthStore();
-        await authStore.fetchUsager();
+        //si la connexion a bien reussi
+        if (response.status === 200){
+          // Mise à jour du store utilisateur
+          const authStore = useAuthStore();
+          await authStore.fetchUsager();
 
-        // Redirection vers le catalogue
-        this.$router.push("/catalogue");
+          // Redirection vers le catalogue
+          this.$router.push("/catalogue");
+        }
 
-        // Catch les erreurs
+
       } catch (err) {
-        if (err.response) {
-          this.erreur = "Erreur de connexion";
-        } else if (err.request) {
+        // Catch les erreurs
+        if (err.response && err.response.status === 422) {
+          const errors = err.response.data.errors;
+          if (errors) {
+            this.erreur = Object.values(errors)[0][0];
+          } else {
+            this.erreur = err.response.data.message || "Erreur de validation";
+          }
+        }
+        else if (err.response && err.response.status === 401) {
+          this.erreur = err.response.data.message || "Courriel ou mot de passe incorrect";
+        }
+        else if (err.response) {
+          this.erreur = err.response.data.message || "Erreur de connexion";
+        }
+        else if (err.request) {
           this.erreur = "Impossible de joindre le serveur";
-        } else {
+        }
+        else {
           this.erreur = "Une erreur est survenue";
         }
         // arreter l'affichage de 'Connexion'

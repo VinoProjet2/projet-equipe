@@ -30,6 +30,7 @@
         </div>
       </div>
       <button type="submit" class="signup-btn">Modifier</button>
+      <p v-if="erreur" class="erreur">{{ erreur }}</p>
     </form>
   </div>
 </template>
@@ -49,6 +50,7 @@ export default {
       mot_de_passe: "",
       erreurs: {},
       messageSucces: "",
+      erreur: "",
     };
   },
   mounted() {
@@ -105,8 +107,26 @@ export default {
         if (erreur.response && erreur.response.status === 422) {
           this.erreurs = erreur.response.data.erreurs;
         }
+        else if (erreur.response.status === 403) {
+          this.erreur = "Vous n'avez pas la permission de modifier ce profil";
+        }
+        else if (erreur.response.status === 404) {
+          this.erreur = "Utilisateur non trouvé";
+        }
+        else if (erreur.response.status === 401) {
+          this.erreur= "Session expirée. Veuillez vous reconnecter";
+          setTimeout(() => {
+            this.$router.push("/connexion-usager");
+          }, 2000);
+        }
+        else if (erreur.response.status === 500) {
+          this.erreur = "Erreur serveur. Veuillez réessayer plus tard";
+        }
+        else {
+          this.erreur = erreur.response.data.message || "Une erreur est survenue lors de la mise à jour";
+        }
       }
-    },
+    }
   },
 };
 </script>
