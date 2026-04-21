@@ -1,11 +1,12 @@
 <template>
+  <!-- Modal de tri pour les produits -->
   <div v-if="show" class="modal-overlay" @click.self="$emit('close')">
     <div class="modal-tri">
       <div class="modal-tete">
         <h3>Trier par</h3>
         <button class="modal-fermer" @click="$emit('close')">❌</button>
       </div>
-
+      <!-- Options de tri -->
       <label>
         <input type="radio" value="0" v-model="localTri" />
         {{ tous }}
@@ -40,6 +41,7 @@ export default {
   name: "ModalTri",
   emits: ["apply", "close"],
   props: {
+    // Propriété pour contrôler l'affichage du modal
     show: Boolean,
     tri: [String, Number],
     tous: {
@@ -65,10 +67,11 @@ export default {
   },
   data() {
     return {
+      // Variable locale pour le tri sélectionné dans le modal
       localTri: this.tri,
     };
   },
-
+  // Watcher pour mettre à jour localTri lorsque la prop tri change
   watch: {
     tri(nouvelleVal) {
       this.localTri = nouvelleVal;
@@ -76,6 +79,7 @@ export default {
   },
 
   methods: {
+    // Méthode pour appliquer le tri sélectionné et fermer le modal
     appliquerTri() {
       this.$emit("apply", this.localTri);
       this.$emit("close");
