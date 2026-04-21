@@ -43,9 +43,7 @@ export default {
   props: {
     // Propriété pour contrôler l'affichage du modal
     show: Boolean,
-    // Propriété pour le tri sélectionné
-    tri: String,
-    // Propriétés pour les labels de tri avec des valeurs par défaut
+    tri: [String, Number],
     tous: {
       type: String,
       default: "Tout désélectionner",

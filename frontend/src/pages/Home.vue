@@ -162,6 +162,7 @@ export default {
 
   data() {
     return {
+      reinitialiser: 0,
       showFilter: false,
       showTri: false,
       tri: 0,
@@ -183,12 +184,9 @@ export default {
           min: null,
           max: null,
         },
-        millesimes: {
-          min: null,
-          max: null,
-        },
+
+        millesimes: [],
         couleur: [],
-        reinitialiser: 0,
       },
       wineStore: useWineStore(),
       termeDeRecherche: "",
@@ -366,7 +364,7 @@ export default {
         prix: { min: null, max: null },
         format: { min: null, max: null },
         degres: { min: null, max: null },
-        millesimes: { min: null, max: null },
+        millesimes: [],
         couleur: [],
       };
       // Incrémente le compteur de réinitialisation pour forcer la réinitialisation des composants de filtre
