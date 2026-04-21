@@ -4,11 +4,7 @@
   position: sticky;
   top: 0;
   width: 100vw;
-  /* pour centrer la banniere
-  car le body est margin-inline: var(--fs-20); */
-  /* pousser la banniere vers la droite de 50% de la largeur du parent*/
   margin-left: 50%;
-  /* deplace la banniere vers la gauche de 50% de la largeur de la banniere elle-meme*/
   transform: translateX(-50%);
   text-align: center;
   background: var(--rouge-vin-profond);

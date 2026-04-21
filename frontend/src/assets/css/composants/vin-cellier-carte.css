@@ -1,6 +1,6 @@
 .vin-cellier-carte {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
 }

@@ -51,6 +51,7 @@
 import axios from "axios";
 import api, { fetchCsrfToken } from "../../api";
 import { useAuthStore } from "../../stores/auth";
+import { useNotifStore } from '../../stores/notification';
 
 export default {
   data() {
@@ -128,6 +129,10 @@ export default {
           const authStore = useAuthStore();
           await authStore.fetchUsager();
 
+          //ajout d'une notification pour le catalogue
+          const notif = useNotifStore();
+          notif.montreMessage('Vous avez été connecté avec succès!', 'bloc-modale-succes');
+
           // Redirection vers le catalogue
           this.$router.push("/catalogue");
         }
@@ -156,6 +161,8 @@ export default {
   },
 };
 </script>
+<<<<<<< HEAD
+=======
 <style scoped>
 @media (min-width: 1024px) {
   .container {
@@ -199,3 +206,4 @@ export default {
   }
 }
 </style>
+>>>>>>> refs/remotes/origin/main

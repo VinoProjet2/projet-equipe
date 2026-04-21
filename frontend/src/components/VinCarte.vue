@@ -10,7 +10,7 @@
         class="vin-image"
         :alt="'Le nom du vin est : ' + bouteilleVin.nom"
       />
-      <div class="vin-note" @click="allerNote">Évaluer</div>
+      <img :src="bouteilleVin.image" class="vin-image" />
     </div>
     <div class="vin-contenu">
       <h1 class="vin-titre">
@@ -59,6 +59,8 @@ export default {
     cellierNom: String,
   },
 
+  emits: ["supprimer-bouteille", "modifier-bouteille"],
+
   methods: {
     // Formate le prix en utilisant la locale canadienne et la devise CAD
     formatPrice(prix) {
@@ -88,11 +90,6 @@ export default {
     // Permet de revenir à la page précédente
     retour() {
       this.$router.go(-1);
-    },
-
-    // Permet redirectionner vers Note.vue
-    allerNote() {
-      this.$router.push(`/note/${this.bouteilleVin.id}`);
     },
   },
 };

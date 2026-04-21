@@ -42,7 +42,8 @@
 
 .carte-bouteille {
   display: flex;
-  gap: 15px;
+  justify-content: space-between;
+  gap: 10px;
   background: var(--blan-clair-2);
   border-radius: 10px;
   padding: 10px;
@@ -56,24 +57,10 @@
   object-fit: contain;
 }
 
-/* .info h3 {
-  margin: 0;
-  font-size: 16px;
-} */
-
-/* .info p {
-  margin: 2px 0;
-  font-size: var(--fs-16);
-  color: var(--gris-fonce-2);
-}
-
-.liste-bouteilles {
-  padding-bottom: 80px;
-} */
-
 .btn-recherche {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
+  margin-inline: 18px;
 }
 
 .resultats-recherche {

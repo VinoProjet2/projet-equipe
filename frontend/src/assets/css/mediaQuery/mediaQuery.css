@@ -1,10 +1,4 @@
-@import url("../base/base.css");
-
 @media (max-width: 3000px) {
-  .alignement {
-    margin-top: var(--espace-gros-neg);
-  }
-
   body {
     margin-inline: var(--fs-20);
   }
@@ -62,10 +56,6 @@
 }
 
 @media (max-width: 595px) {
-  .espacement {
-    padding-bottom: var(--espace-gros-plus);
-  }
-
   .navbar {
     position: sticky;
   }
@@ -140,10 +130,6 @@
     gap: var(--espace-moyen-neg);
   }
 
-  .alignement {
-    margin-top: var(--espace-gros-neg);
-  }
-
   .btn.fixed-btn {
     padding: var(--espace-moyen-petit) var(--espace-grand-mini);
     height: auto;
@@ -193,10 +179,7 @@
   }
 
   .catalogue-carte {
-    /* max-width: 250px; */
-    /* margin: auto; */
     min-width: 250px;
-    /* max-height: 135px; */
   }
 
   .nom {
@@ -208,10 +191,6 @@
     flex-direction: column;
     margin-top: 45px;
     gap: var(--espace-moyen-neg);
-  }
-
-  .alignement {
-    margin-top: var(--espace-gros-neg);
   }
 
   .couleur {

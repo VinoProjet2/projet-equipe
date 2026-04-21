@@ -1,14 +1,3 @@
-@import url("../base/base.css");
-.main-menu li:hover > .submenu,
-.submenu li:hover > .submenu {
-  display: block;
-}
-
-.submenu .submenu {
-  top: 0;
-  left: 100%;
-}
-
 .filtre {
   margin-top: var(--fs-20);
 }
@@ -86,7 +75,6 @@
   visibility: visible;
 }
 
-/* Liste des filtres */
 .filter-list {
   list-style: none;
   padding: 0;
@@ -125,12 +113,6 @@
 .millesime {
   padding-left: 10px;
   margin: 5px 0;
-}
-
-.clear-filter {
-  font-weight: 600;
-  font-family: Georgia, "Times New Roman", Times, serif;
-  font-size: 16px;
 }
 
 .color-filter {
