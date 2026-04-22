@@ -13,11 +13,7 @@
         aria-label="Sélectionner un filtre"
       >
         <option disabled value="">Sélectionner...</option>
-        <option
-          v-for="item in selectionsDisponible"
-          :key="item"
-          :value="Number(item)"
-        >
+        <option v-for="item in selectionsDisponible" :key="item" :value="item">
           {{ item }}
         </option>
       </select>
