@@ -56,6 +56,7 @@
         <p>Alcool : {{ Number(vin.degre_alcool) }} %</p>
         <p>Sucre : {{ vin.taux_sucre }}</p>
         <p>Millésime : {{ vin.annee }}</p>
+        <p>Format (ml) : {{ vin.format }}</p>
       </div>
     </div>
     <!-- Bouton pour basculer l'affichage des informations supplémentaires -->
@@ -120,10 +121,8 @@ export default {
       if (c.includes("orange")) return "#e67e22";
       if (c.includes("ambré(e)") || c.includes("ambre")) return "#FFBF00";
       if (c.includes("doré(e)") || c.includes("dore")) return "#FFD700";
-      if (c.includes("Brun(e)") || c.includes("brun")) return "#3B2414";
-      if (c.includes("Blanche") || c.includes("blanche")) return "#FFF8E7";
-      if (c.includes("Roux, Rousse") || c.includes("roux, rousse"))
-        return "#8B3A1E";
+      if (c.includes("brun(e)") || c.includes("brune")) return "#964B00";
+      if (c.includes("roux") || c.includes("rousse")) return "#F7D094";
 
       return "#999";
     },

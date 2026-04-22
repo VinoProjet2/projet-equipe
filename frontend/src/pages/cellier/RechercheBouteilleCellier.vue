@@ -102,7 +102,7 @@
     @close="showTri = false"
   />
   <!-- afficher la liste des bouteilles trouvées, et les actions associées -->
-  <div class="liste-bouteilles">
+  <div>
     <div v-for="bouteille in bouteilles" :key="bouteille.id">
       <div v-if="bouteille.messageAjout" class="bloc-modale-succes">
         {{ bouteille.messageAjout }}
@@ -141,14 +141,12 @@
           <button @click="voirDetail(bouteille.id)" class="btn btn-cellier">
             <Eye />
           </button>
-
           <button
             class="btn btn-cellier"
             @click="ajouterListeAchats(bouteille.vin.id)"
           >
             <ShoppingBasket class="icons" />
           </button>
-
           <button @click="ouvrirModale(bouteille.id)" class="btn btn-cellier">
             <Trash />
           </button>

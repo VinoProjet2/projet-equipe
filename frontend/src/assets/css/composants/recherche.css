@@ -52,8 +52,8 @@
 }
 
 .image-vin {
-  width: var(--fs-64);
-  height: 100px;
+  max-width: 70px;
+  height: auto;
   object-fit: contain;
 }
 
