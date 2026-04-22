@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Vin;
 use App\Services\SAQService;
 use App\Models\CellierVin;
+
 
 
 class VinController extends Controller
@@ -99,23 +101,13 @@ class VinController extends Controller
         }
 
         if (!empty($filters['format'])) {
-
-            if (isset($filters['format']['min'])) {
-                $query->where('format', '>=', (int)$filters['format']['min']);
-            }
-
-            if (isset($filters['format']['max'])) {
-                $query->where('format', '<=', (int)$filters['format']['max']);
-            }
+            $query->whereIn('format', $filters['format']);
         }
 
+
         if (!empty($filters['degres'])) {
-            if (isset($filters['degres']['min'])) {
-                $query->where('degre_alcool', '>=', $filters['degres']['min']);
-            }
-            if (isset($filters['degres']['max'])) {
-                $query->where('degre_alcool', '<=', $filters['degres']['max']);
-            }
+            $values = array_map('floatval', $filters['degres']);
+            $query->whereIn(DB::raw('CAST(degre_alcool AS DECIMAL(5,2))'), $values);
         }
 
         if (!empty($filters['millesimes'])) {
@@ -150,27 +142,19 @@ class VinController extends Controller
             ],
 
 
-            'format' => [
-                'min' => Vin::where('sku', 'not like', 'PERSO-%')
-                    ->whereNotNull('format')
-                    ->selectRaw('MIN(CAST(format AS UNSIGNED)) as min')
-                    ->value('min'),
+            'format' => Vin::where('sku', 'not like', 'PERSO-%')
+                ->whereNotNull('format')
+                ->distinct()
+                ->orderByRaw('CAST(format AS UNSIGNED)')
+                ->pluck('format')
+                ->values(),
 
-                'max' => Vin::where('sku', 'not like', 'PERSO-%')
-                    ->whereNotNull('format')
-                    ->selectRaw('MAX(CAST(format AS UNSIGNED)) as max')
-                    ->value('max'),
-            ],
-
-            'degres' => [
-                'min' => Vin::where('sku', 'not like', 'PERSO-%')
-                    ->whereNotNull('degre_alcool')
-                    ->min('degre_alcool'),
-
-                'max' => Vin::where('sku', 'not like', 'PERSO-%')
-                    ->whereNotNull('degre_alcool')
-                    ->max('degre_alcool'),
-            ],
+            'degres' => Vin::where('sku', 'not like', 'PERSO-%')
+                ->whereNotNull('degre_alcool')
+                ->distinct()
+                ->orderBy('degre_alcool')
+                ->pluck('degre_alcool')
+                ->values(),
 
             'millesimes' => [
                 'min' => ($min = $millesimeQuery->min('annee')) ? (int) $min : null,
@@ -347,7 +331,7 @@ class VinController extends Controller
             ], 500);
         }
     }
-    
+
     /**
      * Récupérer la liste des pays disponibles dans la base de données pour les vins.
      * @return json
@@ -396,7 +380,7 @@ class VinController extends Controller
 
         return response()->json(['message' => 'La bouteille personnalisée est supprimée']);
     }
- 
+
     /**
      * Récupérer les détails d'un vin à partir de son SKU.
      * @param int $sku

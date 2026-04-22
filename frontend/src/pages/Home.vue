@@ -1,7 +1,6 @@
 <template>
   <Navbar />
 
-
   <div class="home">
     <Logo />
     <!-- Filtres -->
@@ -14,8 +13,6 @@
           <ArrowDownNarrowWide class="icon" /><span>Trier </span>
         </button>
       </div>
-
-
 
       <!-- afficher les filtres si showFilter est true -->
       <div
@@ -62,19 +59,18 @@
             :minLimit="prix.min"
             :maxLimit="prix.max"
           />
-          <FourchetteFiltre
+          <FilterSelect
             :key="reinitialiser"
-            v-model="selected.format"
-            :minLimit="formats.min"
-            :maxLimit="formats.max"
             label="Format (ml)"
+            :items="formats"
+            v-model="selected.format"
           />
-          <FourchetteFiltre
+
+          <FilterSelect
             :key="reinitialiser"
-            v-model="selected.degres"
-            :minLimit="formatDonnees(degres.min)"
-            :maxLimit="formatDonnees(degres.max)"
             label="Degré (%)"
+            :items="degres"
+            v-model="selected.degres"
           />
 
           <AnneeFiltreSelect
@@ -121,7 +117,7 @@
 
     <!-- Affiche une notification -->
     <div v-if="notifStore.message" :class="['notif', notifStore.type]">
-        {{ notifStore.message }}
+      {{ notifStore.message }}
     </div>
 
     <WineGrid v-if="!loading" :vins="vins" />
@@ -152,7 +148,7 @@ import AnneeFiltreSelect from "../components/AnneeFiltreSelect.vue";
 import ColorFilter from "../components/ColorFilter.vue";
 import ModalTri from "../components/ModalTri.vue";
 import Logo from "../components/Logo.vue";
-import { useNotifStore } from '../stores/notification';
+import { useNotifStore } from "../stores/notification";
 
 export default {
   components: {
@@ -179,26 +175,20 @@ export default {
       tri: 0,
       page: 1,
       perPage: 12,
+
       selected: {
         countries: [],
         regions: [],
         cepages: [],
-        prix: {
-          min: null,
-          max: null,
-        },
-        format: {
-          min: null,
-          max: null,
-        },
-        degres: {
-          min: null,
-          max: null,
-        },
+        prix: { min: null, max: null },
+
+        format: [],
+        degres: [],
 
         millesimes: [],
         couleur: [],
       },
+
       wineStore: useWineStore(),
       termeDeRecherche: "",
     };
@@ -235,12 +225,20 @@ export default {
     },
     // Récupère les formats minimum et maximum pour le filtre
     formats() {
-      return this.wineStore.filters.format || { min: 0, max: 0 };
+      return Array.isArray(this.wineStore.filters.format)
+        ? this.wineStore.filters.format
+        : [];
     },
-    // Récupère les degrés minimum et maximum pour le filtre
+
     degres() {
-      return this.wineStore.filters.degres || { min: 0, max: 0 };
+      if (!Array.isArray(this.wineStore.filters.degres)) return [];
+
+      return [...this.wineStore.filters.degres]
+        .map((d) => Number(d))
+        .filter((d) => !isNaN(d))
+        .sort((a, b) => a - b);
     },
+
     // Calcule la liste des millésimes disponibles pour le filtre en fonction des valeurs minimum et maximum
     millesimes() {
       const range = this.wineStore.filters.millesimes;
@@ -274,11 +272,6 @@ export default {
   },
 
   methods: {
-    // Formate les données en nombre, retourne 0 si la conversion échoue
-    formatDonnees(value) {
-      const num = parseFloat(value);
-      return isNaN(num) ? 0 : num;
-    },
     // Affiche ou masque le panneau de filtres
     toggleFilter() {
       this.showFilter = !this.showFilter;
@@ -294,38 +287,37 @@ export default {
     // Récupère les vins en fonction des filtres sélectionnés, de la page actuelle, du nombre de vins par page, du terme de recherche et du tri sélectionné
     async fetchWines() {
       const filters = {};
+
       if (this.selected.countries.length)
         filters.countries = this.selected.countries;
+
       if (this.selected.regions.length) filters.regions = this.selected.regions;
+
       if (this.selected.cepages.length) filters.cepages = this.selected.cepages;
+
       if (
         this.selected.prix &&
         (this.selected.prix.min !== null || this.selected.prix.max !== null)
       ) {
         filters.prix = this.selected.prix;
       }
-      if (
-        this.selected.format &&
-        (this.selected.format.min !== null || this.selected.format.max !== null)
-      ) {
+
+      if (this.selected.format.length) {
         filters.format = this.selected.format;
       }
-      if (
-        this.selected.degres &&
-        (this.selected.degres.min !== null || this.selected.degres.max !== null)
-      ) {
+
+      if (this.selected.degres.length) {
         filters.degres = this.selected.degres;
       }
 
-      if (
-        this.selected.millesimes &&
-        (this.selected.millesimes.min !== null ||
-          this.selected.millesimes.max !== null)
-      ) {
+      if (this.selected.millesimes.length) {
         filters.millesimes = this.selected.millesimes;
       }
-      if (this.selected.couleur.length) filters.couleur = this.selected.couleur;
-      // Appelle la méthode du store pour récupérer les vins en fonction des critères de recherche
+
+      if (this.selected.couleur.length) {
+        filters.couleur = this.selected.couleur;
+      }
+
       await this.wineStore.fetchAllWines(
         this.page,
         this.perPage,
@@ -373,15 +365,17 @@ export default {
         regions: [],
         cepages: [],
         prix: { min: null, max: null },
-        format: { min: null, max: null },
-        degres: { min: null, max: null },
+
+        format: [],
+        degres: [],
         millesimes: [],
         couleur: [],
       };
-      // Incrémente le compteur de réinitialisation pour forcer la réinitialisation des composants de filtre
+
       this.termeDeRecherche = "";
       this.page = 1;
       this.reinitialiser++;
+
       this.fetchWines();
     },
   },
@@ -392,6 +386,6 @@ export default {
   setup() {
     const notifStore = useNotifStore();
     return { notifStore };
-  }
+  },
 };
 </script>

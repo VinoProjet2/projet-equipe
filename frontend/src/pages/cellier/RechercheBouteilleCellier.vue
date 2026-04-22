@@ -72,21 +72,20 @@
         :maxLimit="safeNumber(filters.prix.max)"
       />
 
-      <FourchetteFiltre
+      <FilterSelect
         :key="reinitialiser"
-        v-model="selected.format"
-        :minLimit="safeNumber(filters.format.min)"
-        :maxLimit="safeNumber(filters.format.max)"
         label="Format (ml)"
+        :items="formats"
+        v-model="selected.format"
       />
 
-      <FourchetteFiltre
+      <FilterSelect
         :key="reinitialiser"
-        v-model="selected.degres"
-        :minLimit="safeNumber(filters.degres.min)"
-        :maxLimit="safeNumber(filters.degres.max)"
         label="Degré (%)"
+        :items="degres"
+        v-model="selected.degres"
       />
+
       <AnneeFiltreSelect
         :key="reinitialiser"
         :items="filters.millesimes"
@@ -138,9 +137,12 @@
           <Eye />
         </button>
 
-          <button class="btn btn-cellier" @click="ajouterListeAchats(bouteille.vin.id)">
-            <ShoppingBasket class="icons" />
-          </button>
+        <button
+          class="btn btn-cellier"
+          @click="ajouterListeAchats(bouteille.vin.id)"
+        >
+          <ShoppingBasket class="icons" />
+        </button>
 
         <button @click="ouvrirModale(bouteille.id)" class="btn btn-cellier">
           <Trash />
@@ -227,8 +229,10 @@ export default {
         regions: [],
         cepages: [],
         prix: { min: null, max: null },
-        format: { min: null, max: null },
-        degres: { min: null, max: null },
+
+        format: [],
+        degres: [],
+
         millesimes: [],
         couleur: [],
       },
@@ -237,16 +241,18 @@ export default {
         countries: [],
         regions: [],
         cepages: [],
-        prix: { min: 0, max: 0 },
-        format: { min: 0, max: 0 },
-        degres: { min: 0, max: 0 },
-        millesimes: [],
         couleur: [],
+
+        prix: { min: 0, max: 0 },
+
+        format: [],
+        degres: [],
+
+        millesimes: [],
       },
 
       afficherModale: false,
       idASupprimer: null,
-      reinitialiser: 0,
     };
   },
 
@@ -264,6 +270,26 @@ export default {
     },
   },
 
+  computed: {
+    formats() {
+      return Array.isArray(this.filters.format) ? this.filters.format : [];
+    },
+
+    degres() {
+      if (!Array.isArray(this.filters.degres)) return [];
+
+      return [...this.filters.degres]
+        .map((d) => Number(d))
+        .filter((d) => !isNaN(d))
+        .sort((a, b) => a - b)
+        .map((d) =>
+          d.toLocaleString("fr-CA", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2,
+          }),
+        );
+    },
+  },
   methods: {
     // fonction utilitaire pour extraire les valeurs min et max d'un tableau de valeurs
     getMinMax(array) {
@@ -314,17 +340,11 @@ export default {
           filters.prix = this.selected.prix;
         }
 
-        if (
-          this.selected.format &&
-          (this.selected.format.min != null || this.selected.format.max != null)
-        ) {
+        if (this.selected.format.length) {
           filters.format = this.selected.format;
         }
 
-        if (
-          this.selected.degres &&
-          (this.selected.degres.min != null || this.selected.degres.max != null)
-        ) {
+        if (this.selected.degres.length) {
           filters.degres = this.selected.degres;
         }
 
@@ -344,16 +364,16 @@ export default {
         // mettre à jour la liste des bouteilles avec les résultats de la recherche
         this.bouteilles = res.data.data || [];
         // mettre à jour les options de filtres disponibles en fonction des résultats de la recherche
+
         if (res.data.filters) {
           this.filters = {
             countries: res.data.filters.countries || [],
             regions: res.data.filters.regions || [],
             cepages: res.data.filters.cepages || [],
             couleur: res.data.filters.couleur || [],
-
             prix: this.getMinMax(res.data.filters.prix),
-            format: this.getMinMax(res.data.filters.formats),
-            degres: this.getMinMax(res.data.filters.degres),
+            format: res.data.filters.format || [],
+            degres: res.data.filters.degres || [],
 
             millesimes: res.data.filters.millesimes || [],
           };
@@ -393,9 +413,10 @@ export default {
 
     //ajoute une bouteille a la liste d'achar
     async ajouterListeAchats(idVin) {
-
       //Veut filtres les bouteilles, pour juste recuperer les bouteilles avec id concernees
-      const bouteillesConcernees = this.bouteilles.filter((b) => b.vin.id === idVin);
+      const bouteillesConcernees = this.bouteilles.filter(
+        (b) => b.vin.id === idVin,
+      );
 
       // Réinitialiser les messages
       bouteillesConcernees.forEach((bouteille) => {
@@ -404,7 +425,6 @@ export default {
       });
 
       try {
-
         // CSRF token
         await fetchCsrfToken();
 
@@ -422,37 +442,43 @@ export default {
           vin_id: vinId,
         });
 
-        if (response.status === 200 || response.status === 201){
+        if (response.status === 200 || response.status === 201) {
           // afficher un message de succès
           bouteillesConcernees.forEach((bouteille) => {
-            bouteille.messageAjout = response.data.message || "Bouteille ajoutée à la liste d'achat !";
-            setTimeout(() => { bouteille.messageAjout = null; }, 2000);
+            bouteille.messageAjout =
+              response.data.message || "Bouteille ajoutée à la liste d'achat !";
+            setTimeout(() => {
+              bouteille.messageAjout = null;
+            }, 2000);
           });
         }
-
       } catch (erreur) {
         // afficher message d'erreur
         bouteillesConcernees.forEach((bouteille) => {
-          bouteille.messageErreur = "Cette bouteille est déjà dans votre liste d'achat";
-          setTimeout(() => { bouteille.messageErreur = null; }, 3000);
+          bouteille.messageErreur =
+            "Cette bouteille est déjà dans votre liste d'achat";
+          setTimeout(() => {
+            bouteille.messageErreur = null;
+          }, 3000);
         });
       }
     },
-     // fonction pour ajouter une bouteille à la liste de courses
-     reinitialiserFiltres() {
+    // fonction pour ajouter une bouteille à la liste de courses
+    reinitialiserFiltres() {
       this.selected = {
         countries: [],
         regions: [],
         cepages: [],
         prix: { min: null, max: null },
-        format: { min: null, max: null },
-        degres: { min: null, max: null },
+        format: [],
+        degres: [],
         millesimes: [],
         couleur: [],
-        reinitialiser: this.selected.reinitialiser + 1,
       };
 
       this.search = "";
+      this.reinitialiser++;
+
       this.fetchBouteilles();
     },
   },

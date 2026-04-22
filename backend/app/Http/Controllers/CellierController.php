@@ -22,7 +22,7 @@ class CellierController extends Controller
             'data' => $celliers
         ]);
     }
-   
+
     /**
      * Place le nom dans celliers.
      * @param Request $request
@@ -54,7 +54,7 @@ class CellierController extends Controller
             'data' => $cellier
         ], 201);
     }
-   
+
     /**
      * Mise a jour du nom dans la table celliers.
      * @param Request $request
@@ -103,7 +103,7 @@ class CellierController extends Controller
     {
         //Récupère l'usager actuellement connecté
         $usager = auth()->user();
-        
+
         //Récupère les filtres envoyés ou un tableau vide par defaut
         $filters = $request->get('filters', []);
         $search = $request->get('recherche', '');
@@ -116,26 +116,26 @@ class CellierController extends Controller
             })
             ->join('vins', 'cellier_vins.vin_id', '=', 'vins.id')
             ->select('cellier_vins.*');
-            
+
         // Trie les bouteilles selon num passé par requete    
         switch ($tri) {
             case 1:
                 $query->orderBy('vins.nom', 'asc');
                 break;
             case 2:
-                $query->orderBy('vins.nom', 'desc');                    
+                $query->orderBy('vins.nom', 'desc');
                 break;
             case 3:
-                $query->orderBy('prix', 'asc');                    
+                $query->orderBy('prix', 'asc');
                 break;
             case 4:
-                $query->orderBy('prix', 'desc');                    
+                $query->orderBy('prix', 'desc');
                 break;
             case 5:
-                $query->orderBy('annee', 'asc');                    
+                $query->orderBy('annee', 'asc');
                 break;
             case 6:
-                $query->orderBy('annee', 'desc');                    
+                $query->orderBy('annee', 'desc');
                 break;
             default:
                 break;
@@ -183,14 +183,6 @@ class CellierController extends Controller
             );
         }
 
-        //Filtrer par format 
-        if (!empty($filters['formats'])) {
-            $query->whereHas(
-                'vin',
-                fn($q) =>
-                $q->whereIn('format', $filters['formats'])
-            );
-        }
 
         //filtrer par degre alcool
         if (!empty($filters['degres'])) {
@@ -200,6 +192,12 @@ class CellierController extends Controller
                 $q->whereIn('degre_alcool', $filters['degres'])
             );
         }
+
+
+        if (!empty($filters['format'])) {
+            $query->whereIn('format', $filters['format']);
+        }
+
 
         //filtrer par millesimes
         if (!empty($filters['millesimes'])) {
@@ -238,7 +236,7 @@ class CellierController extends Controller
             'regions' => (clone $vinQuery)->distinct()->pluck('region')->filter()->values(),
             'cepages' => (clone $vinQuery)->distinct()->pluck('cepage')->filter()->values(),
             'prix' => (clone $vinQuery)->distinct()->pluck('prix')->filter()->values(),
-            'formats' => (clone $vinQuery)->distinct()->pluck('format')->filter()->values(),
+            'format' => (clone $vinQuery)->distinct()->pluck('format')->filter()->values(),
             'degres' => (clone $vinQuery)->distinct()->pluck('degre_alcool')->filter()->values(),
             'millesimes' => (clone $vinQuery)->distinct()->pluck('annee')->filter()->values(),
             'couleur' => (clone $vinQuery)->distinct()->pluck('couleur')->filter()->values(),

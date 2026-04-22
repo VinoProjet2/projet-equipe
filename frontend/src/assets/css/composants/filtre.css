@@ -29,7 +29,7 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 
 .filter-panel.active {

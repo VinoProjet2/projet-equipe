@@ -11,13 +11,12 @@
           v-model="range"
           :min="minLimit"
           :max="maxLimit"
-          :tooltips="true"
-          :margin="1"
+          :tooltips="false"
         />
 
-        <div class="values">
-          <span>{{ range[0] }}</span>
-          <span>{{ range[1] }}</span>
+        <div class="custom-tooltips">
+          <div class="tooltip-min">{{ range[0] }}</div>
+          <div class="tooltip-max">{{ range[1] }}</div>
         </div>
         <button @click="apply" class="app-filtre">Appliquer le filtre</button>
       </div>

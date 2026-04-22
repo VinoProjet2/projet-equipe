@@ -34,3 +34,21 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
+.custom-tooltips {
+  position: relative;
+}
+
+.tooltip-min {
+  position: absolute;
+  top: -50px;
+  left: 0;
+  font-weight: 600;
+}
+
+.tooltip-max {
+  position: absolute;
+  bottom: -10px;
+  right: 0;
+  font-weight: 600;
+}
