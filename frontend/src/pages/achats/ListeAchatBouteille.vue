@@ -10,10 +10,10 @@
       @modifier-bouteille="modifierBouteille"
     />
 
-    <Review 
-			v-if="store.bouteilleVin" 
+    <Review
+			v-if="store.bouteilleVin"
 			:initialRating="store.review?.rating"
-      :initialComment="store.review?.comment" 
+      :initialComment="store.review?.comment"
       @save="handleSaveReview"
 		/>
 
@@ -71,8 +71,8 @@ export default {
     // Supprime la bouteille de la liste d'achat en appelant l'API, puis redirige vers la page précédente
     async supprimerBouteille() {
       try {
-        const bouteilleId = this.store.bouteilleVin.id;
-        await api.delete(`/liste-achats/${bouteilleId}`);
+        const bouteilleSKU = this.store.bouteilleVin.sku;
+        const response = await api.delete(`/supprimer-bouteille/${bouteilleSKU}`);
         this.store.bouteilleVin = null;
         this.afficherModale = false;
         this.$router.back();
@@ -94,13 +94,13 @@ export default {
 					rating: data.rating,
 					comment: data.comment
 				});
-				
+
 				this.store.review = { ...data };
-				
+
 			} catch (error) {
 				console.error(error);
 			}
-		},    
+		},
   },
 };
 </script>
