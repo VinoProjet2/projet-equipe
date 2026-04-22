@@ -106,62 +106,6 @@
   <!-- afficher la liste des bouteilles trouvées, et les actions associées -->
   <div class="liste-bouteilles">
     <div v-for="bouteille in bouteilles" :key="bouteille.id">
-      <img
-        :src="bouteille.vin.image_url"
-        class="image-vin"
-        :alt="'Le nom du vin est : ' + bouteille.vin.nom"
-      />
-
-      <div class="info">
-        <h3>{{ bouteille.vin.nom }}</h3>
-        <p>Cellier : {{ bouteille.cellier.nom }}</p>
-        <p>Prix : {{ bouteille.vin.prix }}$</p>
-        <p>Quantité : {{ bouteille.quantite }}</p>
-
-        <button
-          @click="modifierQuantiteVin(bouteille.quantite - 1, bouteille.id)"
-          class="btn-qte"
-          :disabled="bouteille.quantite <= 1"
-          aria-label="Réduire la quantité"
-        >
-          <CircleMinus />
-        </button>
-
-        <button
-          @click="modifierQuantiteVin(bouteille.quantite + 1, bouteille.id)"
-          class="btn-qte"
-          aria-label="Augmenter la quantité"
-        >
-          <CirclePlus />
-        </button>
-      </div>
-      <!-- boutons d'action pour chaque bouteille : Afficher les détails, ajouter à la liste de courses, supprimer -->
-      <div class="bouton-cellier">
-        <button
-          @click="voirDetail(bouteille.id)"
-          class="btn btn-cellier"
-          aria-label="Voir les détails"
-        >
-          <Eye />
-        </button>
-
-        <button
-          class="btn btn-cellier"
-          @click="ajouterListeAchats(bouteille.vin.id)"
-          aria-label="Ajouter à la liste d'achats"
-        >
-          <ShoppingBasket class="icons" />
-        </button>
-
-        <button
-          @click="ouvrirModale(bouteille.id)"
-          class="btn btn-cellier"
-          aria-label="Supprimer"
-        >
-          <Trash />
-        </button>
-      </div>
-
       <div v-if="bouteille.messageAjout" class="bloc-modale-succes">
         {{ bouteille.messageAjout }}
       </div>
@@ -171,7 +115,11 @@
       </div>
 
       <div class="carte-bouteille">
-        <img :src="bouteille.vin.image_url" class="image-vin" />
+        <img
+          :src="bouteille.vin.image_url"
+          class="image-vin"
+          :alt="'Le nom du vin est : ' + bouteille.vin.nom"
+        />
 
         <div class="info">
           <h3>{{ bouteille.vin.nom }}</h3>
@@ -183,6 +131,7 @@
             @click="modifierQuantiteVin(bouteille.quantite - 1, bouteille.id)"
             class="btn-qte"
             :disabled="bouteille.quantite <= 1"
+            aria-label="Réduire la quantité"
           >
             <CircleMinus />
           </button>
@@ -190,24 +139,34 @@
           <button
             @click="modifierQuantiteVin(bouteille.quantite + 1, bouteille.id)"
             class="btn-qte"
+            aria-label="Augmenter la quantité"
           >
             <CirclePlus />
           </button>
         </div>
         <!-- boutons d'action pour chaque bouteille : Afficher les détails, ajouter à la liste de courses, supprimer -->
         <div class="bouton-cellier">
-          <button @click="voirDetail(bouteille.id)" class="btn btn-cellier">
+          <button
+            @click="voirDetail(bouteille.id)"
+            class="btn btn-cellier"
+            aria-label="Voir les détails"
+          >
             <Eye />
           </button>
 
           <button
             class="btn btn-cellier"
             @click="ajouterListeAchats(bouteille.vin.id)"
+            aria-label="Ajouter à la liste d'achats"
           >
             <ShoppingBasket class="icons" />
           </button>
 
-          <button @click="ouvrirModale(bouteille.id)" class="btn btn-cellier">
+          <button
+            @click="ouvrirModale(bouteille.id)"
+            class="btn btn-cellier"
+            aria-label="Supprimer"
+          >
             <Trash />
           </button>
         </div>

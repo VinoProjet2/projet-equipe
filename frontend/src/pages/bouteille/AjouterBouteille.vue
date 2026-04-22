@@ -49,7 +49,7 @@
 <script>
 import Navbar from "../../components/Navbar.vue";
 import api from "../../api";
-import { useNotifStore } from '../../stores/notification';
+import { useNotifStore } from "../../stores/notification";
 
 export default {
   components: {
@@ -98,10 +98,12 @@ export default {
 
         //envoy une notification au catalogue, une fois qu'on y retourne
         const notif = useNotifStore();
-        notif.montreMessage('Votre bouteille a été ajoutée au cellier avec succès!', 'bloc-modale-succes');
+        notif.montreMessage(
+          "Votre bouteille a été ajoutée au cellier avec succès!",
+          "bloc-modale-succes",
+        );
 
         this.$router.back();
-
       } catch (erreur) {
         if (erreur.response.data.errors) {
           this.erreurs = erreur.response.data.errors;
@@ -109,11 +111,11 @@ export default {
           if (erreur.response.data.message) {
             this.message = erreur.response.data.message;
 
-            //envoy une notification d'erreurs au catalogue, une fois qu'on y retourne
+            //envoyer une notification d'erreurs a la page precedante, une fois qu'on y retourne
             const notif = useNotifStore();
-            notif.montreMessage(this.message, 'erreur');
+            notif.montreMessage(this.message, "erreur");
 
-            this.$router.push('/catalogue');
+            this.$router.back();
           }
         }
       }
